@@ -424,13 +424,30 @@
   @media(max-width:840px){.scroll-hint{display:none}}
 
   /* ---- custom trailing cursor (desktop, fine pointer) ---- */
-  .cursor-ring{position:fixed;top:0;left:0;width:34px;height:34px;border:1.5px solid var(--amber);border-radius:50%;
+  .cursor-ring{position:fixed;top:0;left:0;width:9px;height:9px;background:var(--amber);border-radius:50%;
     pointer-events:none;z-index:300;opacity:0;will-change:transform;
-    transition:width .25s var(--ease),height .25s var(--ease),background .25s,border-color .25s,opacity .35s ease}
+    transition:width .25s var(--ease),height .25s var(--ease),background .25s,opacity .35s ease}
   .cursor-ring.active{opacity:1}
-  .cursor-ring.hover{width:56px;height:56px;background:rgba(181,106,43,.10);border-color:var(--amber-deep)}
-  .cursor-ring.down{width:26px;height:26px}
+  .cursor-ring.hover{width:18px;height:18px;background:var(--amber-deep)}
+  .cursor-ring.down{width:6px;height:6px}
   @media(hover:none),(pointer:coarse){.cursor-ring{display:none}}
+
+  /* ---- values: editorial big-type reveal list ---- */
+  .value-list{border-top:1px solid var(--border)}
+  .value{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:18px 36px;
+    padding:34px 0;border-bottom:1px solid var(--border);position:relative;cursor:default;
+    transition:padding-left .45s var(--ease)}
+  .value-idx{font-family:'Space Mono',monospace;font-size:13px;color:var(--amber-deep);align-self:start;padding-top:12px}
+  .value-main{display:flex;justify-content:space-between;align-items:baseline;gap:14px 40px;flex-wrap:wrap}
+  .value-word{font-family:'Space Grotesk',sans-serif;font-weight:700;letter-spacing:-2px;
+    font-size:clamp(40px,8vw,96px);line-height:.95;transition:color .4s var(--ease)}
+  .value-desc{color:var(--text-soft);font-size:16px;max-width:36ch;line-height:1.55}
+  .value-arrow{font-size:26px;color:var(--amber);opacity:0;transform:translate(-10px,10px);
+    transition:opacity .4s var(--ease),transform .4s var(--ease)}
+  .value:hover{padding-left:20px}
+  .value:hover .value-word{color:var(--amber)}
+  .value:hover .value-arrow{opacity:1;transform:none}
+  @media(max-width:680px){.value{grid-template-columns:auto 1fr}.value-arrow{display:none}}
 
   @media(prefers-reduced-motion:reduce){
     /* keep gentle opacity fades; remove only large motion/transforms */
@@ -480,6 +497,7 @@
     <a href="#about">About</a>
     <a href="#work">Work</a>
     <a href="#skills">Skills</a>
+    <a href="#values">Values</a>
     <a href="#background">Background</a>
     <a href="#contact">Contact</a>
   </div>
@@ -593,11 +611,41 @@
   </div>
 </section>
 
+<section id="values" class="wrap">
+  <div class="sec-head"><span class="sec-num">04</span><div class="title-wrap"><span class="sweep"></span><h2 class="sec-title">What I value</h2></div></div>
+  <div class="value-list">
+    <article class="value" data-anim="up">
+      <span class="value-idx">01</span>
+      <div class="value-main">
+        <h3 class="value-word">Family</h3>
+        <p class="value-desc">The people who ground me. Everything I build, I build to make them proud — they're my first reason and my constant motivation.</p>
+      </div>
+      <span class="value-arrow" aria-hidden="true">↗</span>
+    </article>
+    <article class="value" data-anim="up">
+      <span class="value-idx">02</span>
+      <div class="value-main">
+        <h3 class="value-word">Companionship</h3>
+        <p class="value-desc">Nothing great is built alone. I value loyal friends and tight-knit teams who challenge each other and rise together.</p>
+      </div>
+      <span class="value-arrow" aria-hidden="true">↗</span>
+    </article>
+    <article class="value" data-anim="up">
+      <span class="value-idx">03</span>
+      <div class="value-main">
+        <h3 class="value-word">Sport</h3>
+        <p class="value-desc">Discipline, resilience and teamwork on the court carry straight into how I work, lead and keep showing up.</p>
+      </div>
+      <span class="value-arrow" aria-hidden="true">↗</span>
+    </article>
+  </div>
+</section>
+
 <section id="background" class="horizon">
   <div class="hsticky">
     <div class="htrack" id="htrack">
       <article class="hpanel" style="justify-content:center">
-        <span class="sec-num" style="font-family:'Space Mono',monospace;color:var(--amber)">04 — keep going →</span>
+        <span class="sec-num" style="font-family:'Space Mono',monospace;color:var(--amber)">05 — keep going →</span>
         <div class="lead" style="margin-top:18px">The fuller<br><span>picture.</span></div>
         <p>There's more to me than the build — keep scrolling.</p>
       </article>
@@ -877,7 +925,7 @@
       ring.style.transform='translate('+rx+'px,'+ry+'px) translate(-50%,-50%)';
       requestAnimationFrame(loop);
     })();
-    const sel='a,button,.proj,.skill-card,.chip,.clink,.pdot,.award,.photo-stage';
+    const sel='a,button,.proj,.skill-card,.chip,.clink,.pdot,.award,.photo-stage,.value';
     document.querySelectorAll(sel).forEach(el=>{
       el.addEventListener('mouseenter',()=>ring.classList.add('hover'));
       el.addEventListener('mouseleave',()=>ring.classList.remove('hover'));
