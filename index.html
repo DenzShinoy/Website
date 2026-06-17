@@ -432,49 +432,32 @@
   .cursor-ring.down{width:6px;height:6px}
   @media(hover:none),(pointer:coarse){.cursor-ring{display:none}}
 
-  /* ---- values: full-screen sliding image reveal (umanironchi-style) ---- */
-  #values{position:relative}
-  #values.pin{height:400vh}                       /* scroll distance: lead + 3 reveals */
-  .vr-sticky{position:relative}
-  #values.pin .vr-sticky{position:sticky;top:0;height:100vh;overflow:hidden}
-  #values:not(.pin) .vr-sticky{padding:0 16px 24px}
-
-  /* intro label sits behind the panels and is covered as the first image slides down */
-  .vr-label{z-index:0;display:flex;flex-direction:column;align-items:center;justify-content:center;
-    gap:14px;text-align:center;padding:0 24px}
-  #values.pin .vr-label{position:absolute;inset:0}
-  #values:not(.pin) .vr-label{padding:70px 24px 26px}
-  .vr-label .sec-num{font-size:14px}
-  .vr-label h2{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:clamp(34px,7vw,84px);letter-spacing:-2px;line-height:.95}
-  .vr-label p{color:var(--text-soft);font-family:'Space Mono',monospace;font-size:11px;letter-spacing:3px;text-transform:uppercase}
-
-  .vr-panel{position:relative;overflow:hidden;will-change:transform}
-  /* soft-blend top & bottom edges so panels dissolve into each other seamlessly */
-  #values.pin .vr-panel{position:absolute;inset:0;
-    -webkit-mask:linear-gradient(to bottom,transparent 0,#000 24%,#000 76%,transparent 100%);
-    mask:linear-gradient(to bottom,transparent 0,#000 24%,#000 76%,transparent 100%)}
-  #values:not(.pin) .vr-panel{height:80vh;margin-bottom:14px;border-radius:var(--radius-lg);transform:none!important}
-  .vr-panel:nth-of-type(1){z-index:1}
-  .vr-panel:nth-of-type(2){z-index:2}
-  .vr-panel:nth-of-type(3){z-index:3}
-  .vr-img{position:absolute;inset:0;background-size:cover;background-position:center;will-change:transform}
-  /* placeholder gradients — swap for real photos via inline style (see HTML comment) */
-  .vr-img.ph1{background:linear-gradient(135deg,var(--camel),var(--amber-deep))}
-  .vr-img.ph2{background:linear-gradient(135deg,var(--sage),var(--ink-2))}
-  .vr-img.ph3{background:linear-gradient(135deg,var(--amber-deep),var(--ink))}
-  .vr-panel::after{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;
-    background:rgba(20,14,9,.34)}
-  /* caption centred in the solid mid-band so the strong edge fades never touch it */
-  .vr-cap{position:absolute;inset:0;z-index:2;color:var(--sand);
-    padding:clamp(26px,6vw,90px);display:flex;align-items:center;justify-content:space-between;gap:24px;flex-wrap:wrap;
-    text-shadow:0 2px 30px rgba(0,0,0,.45)}
-  .vr-cap>div{display:flex;flex-direction:column;gap:8px}
-  .vr-cap .vr-idx{font-family:'Space Mono',monospace;font-size:14px;color:var(--sand);opacity:.85}
-  .vr-cap h3{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:clamp(48px,12vw,148px);letter-spacing:-3px;line-height:.85}
-  .vr-cap p{max-width:42ch;font-size:clamp(15px,2vw,18px);color:rgba(231,203,163,.9);line-height:1.5}
-  .vr-ph-tag{position:absolute;top:20px;left:20px;z-index:2;font-family:'Space Mono',monospace;font-size:11px;
-    letter-spacing:1px;color:var(--sand);background:rgba(0,0,0,.32);border:1px solid rgba(231,203,163,.4);
+  /* ---- values: light editorial flow with parallax depth ---- */
+  #values{padding:120px 0 80px}
+  .vflow{max-width:920px;margin:0 auto;padding:0 28px}
+  .vflow-title{margin-bottom:6vh;will-change:transform}
+  .vflow-title .sec-num{font-size:14px}
+  .vflow-title h2{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:clamp(46px,11vw,150px);
+    letter-spacing:-3px;line-height:.88;margin-top:14px}
+  .vf-word{display:flex;align-items:baseline;gap:18px;flex-wrap:wrap;margin:14vh 0 5vh;will-change:transform}
+  .vf-word .vf-idx{font-family:'Space Mono',monospace;font-size:14px;color:var(--amber-deep)}
+  .vf-word h3{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:clamp(40px,9vw,120px);
+    letter-spacing:-2.5px;line-height:.9;color:var(--amber-deep)}
+  .vf-text{font-family:'Space Grotesk',sans-serif;font-weight:400;font-size:clamp(20px,3vw,32px);
+    line-height:1.4;letter-spacing:-.5px;max-width:680px;color:var(--text);margin:0 0 9vh;will-change:transform}
+  .vf-img{position:relative;margin:0 auto 12vh;width:100%;will-change:transform}
+  .vf-pic{aspect-ratio:4/3;border-radius:6px;background-size:cover;background-position:center;
+    /* feathered top & bottom so the photo melts into the light page between the writing */
+    -webkit-mask:linear-gradient(to bottom,transparent 0,#000 15%,#000 85%,transparent 100%);
+    mask:linear-gradient(to bottom,transparent 0,#000 15%,#000 85%,transparent 100%)}
+  /* light-toned placeholders — swap for real photos via inline style (see HTML comment) */
+  .vf-pic.ph1{background:linear-gradient(135deg,var(--sand),var(--camel))}
+  .vf-pic.ph2{background:linear-gradient(135deg,#ECDCC2,var(--sage))}
+  .vf-pic.ph3{background:linear-gradient(135deg,var(--camel),var(--sand))}
+  .vr-ph-tag{position:absolute;top:18px;left:18px;font-family:'Space Mono',monospace;font-size:11px;letter-spacing:1px;
+    color:var(--amber-deep);background:rgba(251,245,234,.72);border:1px solid var(--border);
     padding:5px 11px;border-radius:100px;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+  @media(max-width:680px){.vf-word{margin:9vh 0 4vh}.vf-text{margin-bottom:6vh}.vf-img{margin-bottom:8vh}}
 
   @media(prefers-reduced-motion:reduce){
     /* keep gentle opacity fades; remove only large motion/transforms */
@@ -639,41 +622,35 @@
 </section>
 
 <section id="values">
-  <div class="vr-sticky">
-    <div class="vr-label">
+  <div class="vflow">
+    <div class="vflow-title" data-par="0.14">
       <span class="sec-num">04</span>
-      <h2>What I value</h2>
-      <p>scroll ↓</p>
+      <h2>What I<br>value</h2>
     </div>
 
-    <!-- PLACEHOLDERS: to use a real photo, replace  class="vr-img ph1"  with
-         class="vr-img" style="background-image:url('family.jpg')"  (cover/center already set) -->
-    <article class="vr-panel">
-      <div class="vr-img ph1"></div>
+    <!-- PLACEHOLDERS: to use a real photo, replace  class="vf-pic ph1"  with
+         class="vf-pic" style="background-image:url('family.jpg')"  (cover/center already set) -->
+
+    <div class="vf-word" data-par="0.08"><span class="vf-idx">01</span><h3>Family</h3></div>
+    <p class="vf-text" data-par="0.03">The people who ground me. Everything I build, I build to make them proud — my first reason and my constant motivation.</p>
+    <figure class="vf-img" data-par="0.06">
+      <div class="vf-pic ph1"></div>
       <span class="vr-ph-tag">placeholder · add Family photo</span>
-      <div class="vr-cap">
-        <div><span class="vr-idx">01</span><h3>Family</h3></div>
-        <p>The people who ground me. Everything I build, I build to make them proud.</p>
-      </div>
-    </article>
+    </figure>
 
-    <article class="vr-panel">
-      <div class="vr-img ph2"></div>
+    <div class="vf-word" data-par="0.08"><span class="vf-idx">02</span><h3>Companionship</h3></div>
+    <p class="vf-text" data-par="0.03">Nothing great is built alone — loyal friends and tight-knit teams who challenge each other and rise together.</p>
+    <figure class="vf-img" data-par="0.06">
+      <div class="vf-pic ph2"></div>
       <span class="vr-ph-tag">placeholder · add Companionship photo</span>
-      <div class="vr-cap">
-        <div><span class="vr-idx">02</span><h3>Companionship</h3></div>
-        <p>Nothing great is built alone — loyal friends and tight-knit teams who rise together.</p>
-      </div>
-    </article>
+    </figure>
 
-    <article class="vr-panel">
-      <div class="vr-img ph3"></div>
+    <div class="vf-word" data-par="0.08"><span class="vf-idx">03</span><h3>Sport</h3></div>
+    <p class="vf-text" data-par="0.03">Discipline, resilience and teamwork — on the court, and in everything I do.</p>
+    <figure class="vf-img" data-par="0.06">
+      <div class="vf-pic ph3"></div>
       <span class="vr-ph-tag">placeholder · add Sport photo</span>
-      <div class="vr-cap">
-        <div><span class="vr-idx">03</span><h3>Sport</h3></div>
-        <p>Discipline, resilience and teamwork — on the court and in everything I do.</p>
-      </div>
-    </article>
+    </figure>
   </div>
 </section>
 
@@ -790,7 +767,7 @@
       if(stage&&!reduce&&scrollY<innerHeight) stage.style.transform='translateY('+scrollY*0.12+'px)';
       revealCheck();
       horizonUpdate();
-      valuesUpdate();
+      parallax();
       ticking=false;
     });
   }
@@ -891,32 +868,26 @@
   // (reduced-motion users get gentle opacity fades via CSS; others get full motion)
   animEls=[...document.querySelectorAll('[data-anim],[data-words],.sec-head,.title-wrap')];
   addEventListener('scroll',onScroll,{passive:true});
-  addEventListener('resize',()=>{revealCheck();setupHorizon();horizonUpdate();setupValues();},{passive:true});
-  requestAnimationFrame(()=>{nav.classList.toggle('scrolled',scrollY>20);setupHorizon();setupValues();revealCheck();horizonUpdate();});
+  addEventListener('resize',()=>{revealCheck();setupHorizon();horizonUpdate();parSetup();parallax();},{passive:true});
+  requestAnimationFrame(()=>{nav.classList.toggle('scrolled',scrollY>20);setupHorizon();parSetup();parallax();revealCheck();horizonUpdate();});
+  addEventListener('load',()=>{parSetup();parallax();});
 
-  // ---- values: full-screen sliding image reveal (umanironchi-style) ----
-  const vSec=document.getElementById('values');
-  const vPanels=vSec?[...vSec.querySelectorAll('.vr-panel')]:[];
-  function valuesUpdate(){
-    if(!vSec||!vSec.classList.contains('pin'))return;
-    const rect=vSec.getBoundingClientRect();
-    const range=vSec.offsetHeight-innerHeight;
-    const p=range>0?Math.min(Math.max(-rect.top/range,0),1):0;
-    const n=vPanels.length||1, seg=1/n;
-    vPanels.forEach((panel,i)=>{
-      const local=(p-i*seg)/seg;                 // 0..1 within this panel's segment
-      const reveal=Math.min(Math.max(local/0.7,0),1);  // slide down over first 70%, then hold
-      panel.style.transform='translateY('+((1-reveal)*-100)+'%)';   // -100% (above) -> 0 (covering)
-      const im=panel.querySelector('.vr-img');
-      if(im) im.style.transform='scale('+(1.08-0.08*reveal).toFixed(4)+')';  // subtle parallax settle
+  // ---- values: parallax depth (title + each block scroll at different speeds) ----
+  const parEls=[...document.querySelectorAll('[data-par]')];
+  let parBase=[];
+  function parSetup(){
+    parBase=parEls.map(el=>{                       // document-relative centre, ignores transforms
+      let y=0,n=el; while(n){y+=n.offsetTop; n=n.offsetParent;}
+      return y+el.offsetHeight/2;
     });
   }
-  function setupValues(){
-    if(!vSec)return;
-    const canPin=!reduce && innerWidth>820;
-    vSec.classList.toggle('pin',canPin);
-    if(!canPin){vPanels.forEach(panel=>{panel.style.transform='';const im=panel.querySelector('.vr-img');if(im)im.style.transform='';});}
-    else valuesUpdate();
+  function parallax(){
+    if(reduce||!parEls.length)return;
+    const viewMid=scrollY+innerHeight/2;
+    for(let i=0;i<parEls.length;i++){
+      const speed=parseFloat(parEls[i].dataset.par)||0;
+      parEls[i].style.transform='translate3d(0,'+((parBase[i]-viewMid)*speed).toFixed(2)+'px,0)';
+    }
   }
 
   // ---- kinetic marquee (scroll-momentum strip) ----
