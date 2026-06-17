@@ -439,7 +439,7 @@
   .vflow-title h2{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:clamp(48px,12vw,160px);
     letter-spacing:-3px;line-height:.86;margin-top:16px}
 
-  .vf-item{margin:12vh 0}
+  .vf-item{margin:18vh 0}
   .vf-stage{position:relative;width:100%}              /* full page width */
   .vf-img{position:relative;width:100%;display:flex;gap:6px;will-change:transform}   /* triptych: all three photos side by side */
   .vf-pic{flex:1;min-width:0;height:min(80vh,760px);background-color:var(--surface);background-size:cover;background-position:center;
@@ -449,15 +449,15 @@
   /* value title overlaid on the photo, floating at its own scroll speed */
   .vf-word{position:absolute;inset:0;z-index:2;pointer-events:none;will-change:transform;
     display:flex;align-items:center;justify-content:center;
-    color:#FFF7EC;text-shadow:0 2px 26px rgba(20,14,9,.55),0 1px 6px rgba(20,14,9,.45)}
+    color:var(--sand);text-shadow:0 2px 26px rgba(20,14,9,.6),0 1px 6px rgba(20,14,9,.5)}
   .vf-word>div{display:flex;flex-direction:column;align-items:center;gap:10px}
-  .vf-word .vf-idx{font-family:'Space Mono',monospace;font-size:15px;color:rgba(255,247,236,.85)}
+  .vf-word .vf-idx{font-family:'Space Mono',monospace;font-size:15px;color:rgba(231,203,163,.9)}
   .vf-word h3{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:clamp(44px,11vw,150px);
     letter-spacing:-3px;line-height:.85}
   /* explanation appears afterwards, centred under the image */
-  .vf-text{max-width:760px;margin:6vh auto 0;padding:0 28px;text-align:center;will-change:transform;
+  .vf-text{max-width:880px;margin:7vh auto 0;padding:0 28px;text-align:center;will-change:transform;
     font-family:'Space Grotesk',sans-serif;font-weight:400;font-size:clamp(20px,3vw,32px);
-    line-height:1.4;letter-spacing:-.5px;color:var(--text)}
+    line-height:1.45;letter-spacing:-.5px;color:var(--text)}
   @media(max-width:680px){.vf-item{margin:8vh 0}.vf-img{flex-direction:column;gap:10px}.vf-pic{height:42vh}.vf-text{margin-top:5vh}}
 
   @media(prefers-reduced-motion:reduce){
@@ -838,8 +838,9 @@
   function horizonUpdate(){
     if(!horizon)return;
     const r=horizon.getBoundingClientRect();
-    // gradient the whole palette: starts ~1.1 screens out, fully dark by the time the chapter reaches the top third
-    const t=Math.min(Math.max((innerHeight*1.1 - r.top)/(innerHeight*0.85),0),1);
+    // gradient the palette only as the chapter approaches the top half, so it
+    // doesn't begin while the value photos are still on screen (avoids flicker)
+    const t=Math.min(Math.max((innerHeight*0.5 - r.top)/(innerHeight*0.5),0),1);
     setTheme(t);
     if(horizon.classList.contains('pin') && hmax>0){
       const range=horizon.offsetHeight - innerHeight;
