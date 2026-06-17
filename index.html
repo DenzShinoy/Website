@@ -451,8 +451,8 @@
   .vr-panel{position:relative;overflow:hidden;will-change:transform}
   /* soft-blend top & bottom edges so panels dissolve into each other seamlessly */
   #values.pin .vr-panel{position:absolute;inset:0;
-    -webkit-mask:linear-gradient(to bottom,transparent 0,#000 7%,#000 95%,transparent 100%);
-    mask:linear-gradient(to bottom,transparent 0,#000 7%,#000 95%,transparent 100%)}
+    -webkit-mask:linear-gradient(to bottom,transparent 0,#000 24%,#000 76%,transparent 100%);
+    mask:linear-gradient(to bottom,transparent 0,#000 24%,#000 76%,transparent 100%)}
   #values:not(.pin) .vr-panel{height:80vh;margin-bottom:14px;border-radius:var(--radius-lg);transform:none!important}
   .vr-panel:nth-of-type(1){z-index:1}
   .vr-panel:nth-of-type(2){z-index:2}
@@ -463,13 +463,15 @@
   .vr-img.ph2{background:linear-gradient(135deg,var(--sage),var(--ink-2))}
   .vr-img.ph3{background:linear-gradient(135deg,var(--amber-deep),var(--ink))}
   .vr-panel::after{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;
-    background:linear-gradient(to top,rgba(20,14,9,.66),transparent 56%)}
-  .vr-cap{position:absolute;left:0;right:0;bottom:0;z-index:2;color:var(--sand);
-    padding:clamp(26px,6vw,72px);display:flex;align-items:flex-end;justify-content:space-between;gap:24px;flex-wrap:wrap}
+    background:rgba(20,14,9,.34)}
+  /* caption centred in the solid mid-band so the strong edge fades never touch it */
+  .vr-cap{position:absolute;inset:0;z-index:2;color:var(--sand);
+    padding:clamp(26px,6vw,90px);display:flex;align-items:center;justify-content:space-between;gap:24px;flex-wrap:wrap;
+    text-shadow:0 2px 30px rgba(0,0,0,.45)}
   .vr-cap>div{display:flex;flex-direction:column;gap:8px}
-  .vr-cap .vr-idx{font-family:'Space Mono',monospace;font-size:14px;color:var(--sand);opacity:.8}
+  .vr-cap .vr-idx{font-family:'Space Mono',monospace;font-size:14px;color:var(--sand);opacity:.85}
   .vr-cap h3{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:clamp(48px,12vw,148px);letter-spacing:-3px;line-height:.85}
-  .vr-cap p{max-width:42ch;font-size:clamp(15px,2vw,18px);color:rgba(231,203,163,.85);line-height:1.5}
+  .vr-cap p{max-width:42ch;font-size:clamp(15px,2vw,18px);color:rgba(231,203,163,.9);line-height:1.5}
   .vr-ph-tag{position:absolute;top:20px;left:20px;z-index:2;font-family:'Space Mono',monospace;font-size:11px;
     letter-spacing:1px;color:var(--sand);background:rgba(0,0,0,.32);border:1px solid rgba(231,203,163,.4);
     padding:5px 11px;border-radius:100px;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
