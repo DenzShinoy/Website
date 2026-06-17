@@ -439,33 +439,27 @@
   .vflow-title h2{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:clamp(48px,12vw,160px);
     letter-spacing:-3px;line-height:.86;margin-top:16px}
 
-  .vf-item{margin:12vh 0}
+  .vf-item{margin:18vh 0}
   .vf-stage{position:relative;width:100%}              /* full page width */
-  .vf-img{position:relative;width:100%;will-change:transform}
-  .vf-pic{height:min(80vh,760px);background-size:cover;background-position:center;
-    /* feathered top & bottom so each photo melts gently into the light page */
-    -webkit-mask:linear-gradient(to bottom,transparent 0,#000 14%,#000 86%,transparent 100%);
-    mask:linear-gradient(to bottom,transparent 0,#000 14%,#000 86%,transparent 100%)}
-  .vf-pic.ph1{background:linear-gradient(135deg,var(--sand),var(--camel))}
-  .vf-pic.ph2{background:linear-gradient(135deg,#ECDCC2,var(--sage))}
-  .vf-pic.ph3{background:linear-gradient(135deg,var(--camel),var(--sand))}
-  .vf-pic.ph4{background:linear-gradient(135deg,var(--sand),var(--sage))}
+  .vf-img{position:relative;width:100%;display:flex;gap:6px;will-change:transform}   /* triptych: all three photos side by side */
+  .vf-pic{position:relative;flex:1;min-width:0;height:min(80vh,760px);background-color:var(--surface);background-size:cover;background-position:center}
+  /* feather top & bottom by painting the page colour over the edges — far cheaper than a
+     mask, and it follows the theme so photos blend into light *or* dark with no flicker */
+  .vf-pic::after{content:"";position:absolute;inset:0;pointer-events:none;
+    background:linear-gradient(to bottom,var(--bg) 0,transparent 15%,transparent 85%,var(--bg) 100%)}
   /* value title overlaid on the photo, floating at its own scroll speed */
   .vf-word{position:absolute;inset:0;z-index:2;pointer-events:none;will-change:transform;
     display:flex;align-items:center;justify-content:center;
-    color:var(--ink);text-shadow:0 1px 28px rgba(244,236,224,.6)}
+    color:#FFF7EC;text-shadow:0 2px 26px rgba(20,14,9,.55),0 1px 6px rgba(20,14,9,.45)}
   .vf-word>div{display:flex;flex-direction:column;align-items:center;gap:10px}
-  .vf-word .vf-idx{font-family:'Space Mono',monospace;font-size:15px;color:var(--amber-deep)}
+  .vf-word .vf-idx{font-family:'Space Mono',monospace;font-size:15px;color:rgba(255,247,236,.85)}
   .vf-word h3{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:clamp(44px,11vw,150px);
     letter-spacing:-3px;line-height:.85}
   /* explanation appears afterwards, centred under the image */
-  .vf-text{max-width:760px;margin:6vh auto 0;padding:0 28px;text-align:center;will-change:transform;
+  .vf-text{max-width:880px;margin:7vh auto 0;padding:0 28px;text-align:center;will-change:transform;
     font-family:'Space Grotesk',sans-serif;font-weight:400;font-size:clamp(20px,3vw,32px);
-    line-height:1.4;letter-spacing:-.5px;color:var(--text)}
-  .vr-ph-tag{position:absolute;top:18px;left:18px;z-index:3;font-family:'Space Mono',monospace;font-size:11px;letter-spacing:1px;
-    color:var(--amber-deep);background:rgba(251,245,234,.78);border:1px solid var(--border);
-    padding:5px 11px;border-radius:100px;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
-  @media(max-width:680px){.vf-item{margin:8vh 0}.vf-pic{height:min(64vh,520px)}.vf-text{margin-top:5vh}}
+    line-height:1.45;letter-spacing:-.5px;color:var(--text)}
+  @media(max-width:680px){.vf-item{margin:8vh 0}.vf-img{flex-direction:column;gap:10px}.vf-pic{height:42vh}.vf-text{margin-top:5vh}}
 
   @media(prefers-reduced-motion:reduce){
     /* keep gentle opacity fades; remove only large motion/transforms */
@@ -640,36 +634,48 @@
 
   <article class="vf-item">
     <div class="vf-stage">
-      <div class="vf-img" data-par="-0.07"><div class="vf-pic ph1"></div></div>
+      <div class="vf-img" data-par="-0.07">
+        <div class="vf-pic" style="background-image:url('FAM1.jpg')"></div>
+        <div class="vf-pic" style="background-image:url('FAM2.jpg')"></div>
+        <div class="vf-pic" style="background-image:url('FAM3.jpg')"></div>
+      </div>
       <div class="vf-word" data-par="0.26"><div><span class="vf-idx">01</span><h3>Family</h3></div></div>
-      <span class="vr-ph-tag">placeholder · add Family photo</span>
     </div>
     <p class="vf-text" data-par="0.05">The people who ground me. Everything I build, I build to make them proud — my first reason and my constant motivation.</p>
   </article>
 
   <article class="vf-item">
     <div class="vf-stage">
-      <div class="vf-img" data-par="-0.07"><div class="vf-pic ph2"></div></div>
+      <div class="vf-img" data-par="-0.07">
+        <div class="vf-pic" style="background-image:url('COM1.JPG')"></div>
+        <div class="vf-pic" style="background-image:url('COM2.jpg')"></div>
+        <div class="vf-pic" style="background-image:url('COM3.jpg');background-size:auto 135%;background-position:center bottom"></div>
+      </div>
       <div class="vf-word" data-par="0.26"><div><span class="vf-idx">02</span><h3>Companionship</h3></div></div>
-      <span class="vr-ph-tag">placeholder · add Companionship photo</span>
     </div>
     <p class="vf-text" data-par="0.05">Nothing great is built alone — loyal friends and tight-knit teams who challenge each other and rise together.</p>
   </article>
 
   <article class="vf-item">
     <div class="vf-stage">
-      <div class="vf-img" data-par="-0.07"><div class="vf-pic ph3"></div></div>
+      <div class="vf-img" data-par="-0.07">
+        <div class="vf-pic" style="background-image:url('SPO1.jpg')"></div>
+        <div class="vf-pic" style="background-image:url('SPO3.jpg')"></div>
+        <div class="vf-pic" style="background-image:url('SPO2.JPG')"></div>
+      </div>
       <div class="vf-word" data-par="0.26"><div><span class="vf-idx">03</span><h3>Sport</h3></div></div>
-      <span class="vr-ph-tag">placeholder · add Sport photo</span>
     </div>
     <p class="vf-text" data-par="0.05">Discipline, resilience and teamwork — on the court, and in everything I do.</p>
   </article>
 
   <article class="vf-item">
     <div class="vf-stage">
-      <div class="vf-img" data-par="-0.07"><div class="vf-pic ph4"></div></div>
+      <div class="vf-img" data-par="-0.07">
+        <div class="vf-pic" style="background-image:url('FUL1.jpg')"></div>
+        <div class="vf-pic" style="background-image:url('FUL2.jpg')"></div>
+        <div class="vf-pic" style="background-image:url('FUL3.jpg')"></div>
+      </div>
       <div class="vf-word" data-par="0.26"><div><span class="vf-idx">04</span><h3>Fulfillment</h3></div></div>
-      <span class="vr-ph-tag">placeholder · add Fulfillment photo</span>
     </div>
     <p class="vf-text" data-par="0.05">Seeing an idea become something real, lifting the people around me, and building work that genuinely matters — that's what makes it all worth it.</p>
   </article>
@@ -811,31 +817,9 @@
       hmax=0;
     }
   }
-  // palette interpolation: light -> dark as the chapter approaches
-  const TH={bg:['#F4ECE0','#241A12'],surface:['#FBF5EA','#3A271A'],text:['#281D14','#F2E6D6'],
-            'text-soft':['#7A6450','#C2AD95'],border:['#E7D6BF','#4A3823']};
-  function hx(h){h=h.replace('#','');return [parseInt(h.slice(0,2),16),parseInt(h.slice(2,4),16),parseInt(h.slice(4,6),16)];}
-  const THrgb={}; for(const k in TH) THrgb[k]=[hx(TH[k][0]),hx(TH[k][1])];
-  const root=document.documentElement.style;
-  let curT=-1, lastBg='244,236,224';
-  function setTheme(t){
-    if(Math.abs(t-curT)<0.004) return; curT=t;
-    for(const k in THrgb){
-      const a=THrgb[k][0],b=THrgb[k][1];
-      const r=Math.round(a[0]+(b[0]-a[0])*t),g=Math.round(a[1]+(b[1]-a[1])*t),bl=Math.round(a[2]+(b[2]-a[2])*t);
-      root.setProperty('--'+k,'rgb('+r+','+g+','+bl+')');
-      if(k==='bg') lastBg=r+','+g+','+bl;
-    }
-    nav.style.background='rgba('+lastBg+',.72)';
-  }
-  setTheme(0);
-
   function horizonUpdate(){
     if(!horizon)return;
     const r=horizon.getBoundingClientRect();
-    // gradient the whole palette: starts ~1.1 screens out, fully dark by the time the chapter reaches the top third
-    const t=Math.min(Math.max((innerHeight*1.1 - r.top)/(innerHeight*0.85),0),1);
-    setTheme(t);
     if(horizon.classList.contains('pin') && hmax>0){
       const range=horizon.offsetHeight - innerHeight;
       const p=Math.min(Math.max(-r.top/range,0),1);
@@ -904,10 +888,12 @@
   }
   function parallax(){
     if(reduce||!parEls.length)return;
-    const viewMid=scrollY+innerHeight/2;
+    const viewMid=scrollY+innerHeight/2, lim=innerHeight*1.3;
     for(let i=0;i<parEls.length;i++){
+      const d=parBase[i]-viewMid;
+      if(Math.abs(d)>lim) continue;                 // skip elements well off-screen
       const speed=parseFloat(parEls[i].dataset.par)||0;
-      parEls[i].style.transform='translate3d(0,'+((parBase[i]-viewMid)*speed).toFixed(2)+'px,0)';
+      parEls[i].style.transform='translate3d(0,'+(d*speed).toFixed(2)+'px,0)';
     }
   }
 
