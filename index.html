@@ -424,13 +424,48 @@
   @media(max-width:840px){.scroll-hint{display:none}}
 
   /* ---- custom trailing cursor (desktop, fine pointer) ---- */
-  .cursor-ring{position:fixed;top:0;left:0;width:34px;height:34px;border:1.5px solid var(--amber);border-radius:50%;
+  .cursor-ring{position:fixed;top:0;left:0;width:9px;height:9px;background:var(--amber);border-radius:50%;
     pointer-events:none;z-index:300;opacity:0;will-change:transform;
-    transition:width .25s var(--ease),height .25s var(--ease),background .25s,border-color .25s,opacity .35s ease}
+    transition:width .25s var(--ease),height .25s var(--ease),background .25s,opacity .35s ease}
   .cursor-ring.active{opacity:1}
-  .cursor-ring.hover{width:56px;height:56px;background:rgba(181,106,43,.10);border-color:var(--amber-deep)}
-  .cursor-ring.down{width:26px;height:26px}
+  .cursor-ring.hover{width:18px;height:18px;background:var(--amber-deep)}
+  .cursor-ring.down{width:6px;height:6px}
   @media(hover:none),(pointer:coarse){.cursor-ring{display:none}}
+
+  /* ---- values: light flow, full-bleed photos, title over image, parallax depth ---- */
+  #values{padding:120px 0 90px;overflow:hidden}
+  .vflow-title{max-width:920px;margin:0 auto 6vh;padding:0 28px;text-align:center;will-change:transform}
+  .vflow-title .sec-num{font-size:14px}
+  .vflow-title h2{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:clamp(48px,12vw,160px);
+    letter-spacing:-3px;line-height:.86;margin-top:16px}
+
+  .vf-item{margin:12vh 0}
+  .vf-stage{position:relative;width:100%}              /* full page width */
+  .vf-img{position:relative;width:100%;will-change:transform}
+  .vf-pic{height:min(80vh,760px);background-size:cover;background-position:center;
+    /* feathered top & bottom so each photo melts gently into the light page */
+    -webkit-mask:linear-gradient(to bottom,transparent 0,#000 14%,#000 86%,transparent 100%);
+    mask:linear-gradient(to bottom,transparent 0,#000 14%,#000 86%,transparent 100%)}
+  .vf-pic.ph1{background:linear-gradient(135deg,var(--sand),var(--camel))}
+  .vf-pic.ph2{background:linear-gradient(135deg,#ECDCC2,var(--sage))}
+  .vf-pic.ph3{background:linear-gradient(135deg,var(--camel),var(--sand))}
+  .vf-pic.ph4{background:linear-gradient(135deg,var(--sand),var(--sage))}
+  /* value title overlaid on the photo, floating at its own scroll speed */
+  .vf-word{position:absolute;inset:0;z-index:2;pointer-events:none;will-change:transform;
+    display:flex;align-items:center;justify-content:center;
+    color:var(--ink);text-shadow:0 1px 28px rgba(244,236,224,.6)}
+  .vf-word>div{display:flex;flex-direction:column;align-items:center;gap:10px}
+  .vf-word .vf-idx{font-family:'Space Mono',monospace;font-size:15px;color:var(--amber-deep)}
+  .vf-word h3{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:clamp(44px,11vw,150px);
+    letter-spacing:-3px;line-height:.85}
+  /* explanation appears afterwards, centred under the image */
+  .vf-text{max-width:760px;margin:6vh auto 0;padding:0 28px;text-align:center;will-change:transform;
+    font-family:'Space Grotesk',sans-serif;font-weight:400;font-size:clamp(20px,3vw,32px);
+    line-height:1.4;letter-spacing:-.5px;color:var(--text)}
+  .vr-ph-tag{position:absolute;top:18px;left:18px;z-index:3;font-family:'Space Mono',monospace;font-size:11px;letter-spacing:1px;
+    color:var(--amber-deep);background:rgba(251,245,234,.78);border:1px solid var(--border);
+    padding:5px 11px;border-radius:100px;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+  @media(max-width:680px){.vf-item{margin:8vh 0}.vf-pic{height:min(64vh,520px)}.vf-text{margin-top:5vh}}
 
   @media(prefers-reduced-motion:reduce){
     /* keep gentle opacity fades; remove only large motion/transforms */
@@ -480,6 +515,7 @@
     <a href="#about">About</a>
     <a href="#work">Work</a>
     <a href="#skills">Skills</a>
+    <a href="#values">Values</a>
     <a href="#background">Background</a>
     <a href="#contact">Contact</a>
   </div>
@@ -593,11 +629,57 @@
   </div>
 </section>
 
+<section id="values">
+  <div class="vflow-title" data-par="0.12">
+    <span class="sec-num">04</span>
+    <h2>What I<br>value</h2>
+  </div>
+
+  <!-- PLACEHOLDERS: to use a real photo, replace  class="vf-pic ph1"  with
+       class="vf-pic" style="background-image:url('family.jpg')"  (cover/center already set) -->
+
+  <article class="vf-item">
+    <div class="vf-stage">
+      <div class="vf-img" data-par="-0.07"><div class="vf-pic ph1"></div></div>
+      <div class="vf-word" data-par="0.26"><div><span class="vf-idx">01</span><h3>Family</h3></div></div>
+      <span class="vr-ph-tag">placeholder · add Family photo</span>
+    </div>
+    <p class="vf-text" data-par="0.05">The people who ground me. Everything I build, I build to make them proud — my first reason and my constant motivation.</p>
+  </article>
+
+  <article class="vf-item">
+    <div class="vf-stage">
+      <div class="vf-img" data-par="-0.07"><div class="vf-pic ph2"></div></div>
+      <div class="vf-word" data-par="0.26"><div><span class="vf-idx">02</span><h3>Companionship</h3></div></div>
+      <span class="vr-ph-tag">placeholder · add Companionship photo</span>
+    </div>
+    <p class="vf-text" data-par="0.05">Nothing great is built alone — loyal friends and tight-knit teams who challenge each other and rise together.</p>
+  </article>
+
+  <article class="vf-item">
+    <div class="vf-stage">
+      <div class="vf-img" data-par="-0.07"><div class="vf-pic ph3"></div></div>
+      <div class="vf-word" data-par="0.26"><div><span class="vf-idx">03</span><h3>Sport</h3></div></div>
+      <span class="vr-ph-tag">placeholder · add Sport photo</span>
+    </div>
+    <p class="vf-text" data-par="0.05">Discipline, resilience and teamwork — on the court, and in everything I do.</p>
+  </article>
+
+  <article class="vf-item">
+    <div class="vf-stage">
+      <div class="vf-img" data-par="-0.07"><div class="vf-pic ph4"></div></div>
+      <div class="vf-word" data-par="0.26"><div><span class="vf-idx">04</span><h3>Fulfillment</h3></div></div>
+      <span class="vr-ph-tag">placeholder · add Fulfillment photo</span>
+    </div>
+    <p class="vf-text" data-par="0.05">Seeing an idea become something real, lifting the people around me, and building work that genuinely matters — that's what makes it all worth it.</p>
+  </article>
+</section>
+
 <section id="background" class="horizon">
   <div class="hsticky">
     <div class="htrack" id="htrack">
       <article class="hpanel" style="justify-content:center">
-        <span class="sec-num" style="font-family:'Space Mono',monospace;color:var(--amber)">04 — keep going →</span>
+        <span class="sec-num" style="font-family:'Space Mono',monospace;color:var(--amber)">05 — keep going →</span>
         <div class="lead" style="margin-top:18px">The fuller<br><span>picture.</span></div>
         <p>There's more to me than the build — keep scrolling.</p>
       </article>
@@ -706,6 +788,7 @@
       if(stage&&!reduce&&scrollY<innerHeight) stage.style.transform='translateY('+scrollY*0.12+'px)';
       revealCheck();
       horizonUpdate();
+      parallax();
       ticking=false;
     });
   }
@@ -806,8 +889,27 @@
   // (reduced-motion users get gentle opacity fades via CSS; others get full motion)
   animEls=[...document.querySelectorAll('[data-anim],[data-words],.sec-head,.title-wrap')];
   addEventListener('scroll',onScroll,{passive:true});
-  addEventListener('resize',()=>{revealCheck();setupHorizon();horizonUpdate();},{passive:true});
-  requestAnimationFrame(()=>{nav.classList.toggle('scrolled',scrollY>20);setupHorizon();revealCheck();horizonUpdate();});
+  addEventListener('resize',()=>{revealCheck();setupHorizon();horizonUpdate();parSetup();parallax();},{passive:true});
+  requestAnimationFrame(()=>{nav.classList.toggle('scrolled',scrollY>20);setupHorizon();parSetup();parallax();revealCheck();horizonUpdate();});
+  addEventListener('load',()=>{parSetup();parallax();});
+
+  // ---- values: parallax depth (title + each block scroll at different speeds) ----
+  const parEls=[...document.querySelectorAll('[data-par]')];
+  let parBase=[];
+  function parSetup(){
+    parBase=parEls.map(el=>{                       // document-relative centre, ignores transforms
+      let y=0,n=el; while(n){y+=n.offsetTop; n=n.offsetParent;}
+      return y+el.offsetHeight/2;
+    });
+  }
+  function parallax(){
+    if(reduce||!parEls.length)return;
+    const viewMid=scrollY+innerHeight/2;
+    for(let i=0;i<parEls.length;i++){
+      const speed=parseFloat(parEls[i].dataset.par)||0;
+      parEls[i].style.transform='translate3d(0,'+((parBase[i]-viewMid)*speed).toFixed(2)+'px,0)';
+    }
+  }
 
   // ---- kinetic marquee (scroll-momentum strip) ----
   (function(){
