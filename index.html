@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Denz Shinoy - Mechatronics Engineer</title>
+<title>Denz Shinoy · Mechatronics Engineer</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
@@ -425,13 +425,15 @@
   @keyframes scrollDot{0%{opacity:0;transform:translate(-50%,0)}25%{opacity:1}55%{opacity:1;transform:translate(-50%,11px)}100%{opacity:0;transform:translate(-50%,11px)}}
   @media(max-width:840px){.scroll-hint{display:none}}
 
-  /* ---- custom trailing cursor (desktop, fine pointer) ---- */
-  .cursor-ring{position:fixed;top:0;left:0;width:9px;height:9px;background:var(--amber);border-radius:50%;
-    pointer-events:none;z-index:300;opacity:0;will-change:transform;
-    transition:width .25s var(--ease),height .25s var(--ease),background .25s,opacity .35s ease}
+  /* ---- cursor: white exclusion orb — inverts whatever sits beneath it ---- */
+  .cursor-ring{position:fixed;top:0;left:0;width:44px;height:44px;
+    background:#fff;border-radius:50%;
+    pointer-events:none;z-index:9999;opacity:0;
+    mix-blend-mode:exclusion;will-change:transform;
+    transition:width .35s var(--ease),height .35s var(--ease),opacity .4s ease}
   .cursor-ring.active{opacity:1}
-  .cursor-ring.hover{width:18px;height:18px;background:var(--amber-deep)}
-  .cursor-ring.down{width:6px;height:6px}
+  .cursor-ring.hover{width:80px;height:80px}
+  .cursor-ring.down{width:22px;height:22px}
   @media(hover:none),(pointer:coarse){.cursor-ring{display:none}}
 
   /* ---- values: light flow, full-bleed photos, title over image, parallax depth ---- */
@@ -463,6 +465,40 @@
     line-height:1.45;letter-spacing:-.5px;color:var(--text)}
   @media(max-width:680px){.vf-item{margin:8vh 0}.vf-img{flex-direction:column;gap:10px}.vf-pic{flex:0 0 auto;width:100%;height:46vh}.vf-text{margin-top:5vh}}
 
+  /* ---- film grain overlay ---- */
+  .grain{position:fixed;inset:0;z-index:998;pointer-events:none;opacity:.04;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.78' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E");
+    background-size:200px}
+
+  /* ---- orbit text ring around hero photo dial ---- */
+  .orbit-text{position:absolute;inset:-14px;width:calc(100% + 28px);height:calc(100% + 28px);
+    pointer-events:none;animation:spin 30s linear infinite;opacity:.55;overflow:visible}
+  .orbit-text text{font-family:'Space Mono',monospace;font-size:11.5px;letter-spacing:4.5px;
+    text-transform:uppercase;fill:var(--text-soft)}
+
+  /* ---- intro: ambient large counter in background ---- */
+  .intro-bg-num{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+    pointer-events:none;overflow:hidden;
+    font-family:'Space Grotesk',sans-serif;font-weight:700;
+    font-size:min(55vw,600px);line-height:1;letter-spacing:-14px;
+    color:rgba(231,203,163,.055);user-select:none;z-index:1;
+    opacity:0;animation:introFade .6s var(--ease) 1s forwards}
+
+  /* ---- intro: scrolling credential ticker at the bottom ---- */
+  .intro-ticker{position:absolute;bottom:0;left:0;right:0;z-index:3;overflow:hidden;
+    border-top:1px solid rgba(231,203,163,.12);padding:13px 0}
+  .intro-ticker-inner{display:flex;width:max-content;animation:introTick 26s linear infinite}
+  .intro-ticker-item{font-family:'Space Mono',monospace;font-size:10px;letter-spacing:3.5px;
+    text-transform:uppercase;color:rgba(231,203,163,.28);white-space:nowrap;padding-right:40px}
+  @keyframes introTick{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+
+  /* ---- 3D card tilt: smooth spring-back ---- */
+  .proj{transform-style:preserve-3d}
+
+  /* ---- section: full-width ruled separator ---- */
+  .sec-rule{display:block;width:100%;height:1px;background:linear-gradient(90deg,transparent,var(--border) 20%,var(--border) 80%,transparent);margin-bottom:56px;opacity:0;transition:opacity .9s var(--ease) .2s}
+  .sec-rule.is-in{opacity:1}
+
   @media(prefers-reduced-motion:reduce){
     /* keep gentle opacity fades; remove only large motion/transforms */
     [data-anim]{transform:none!important;filter:none!important;clip-path:inset(0 0 0 0)!important;transition:opacity .7s ease var(--d,0ms)!important}
@@ -487,8 +523,11 @@
 <body>
 <script>document.documentElement.className+=' js intro-lock';</script>
 
+<div class="grain" aria-hidden="true"></div>
+
 <div class="intro" id="intro" role="dialog" aria-label="Welcome">
   <div class="intro-bg" aria-hidden="true"></div>
+  <div class="intro-bg-num" id="introBgNum" aria-hidden="true">0</div>
   <div class="intro-inner">
     <div class="intro-eyebrow">Mechatronics · Robotics · Engineering</div>
     <div class="intro-name">
@@ -500,6 +539,30 @@
       <span class="intro-bar"><i id="introBar"></i></span>
     </div>
     <button class="intro-enter" id="introEnter" type="button">Enter portfolio <span>→</span></button>
+  </div>
+  <div class="intro-ticker" aria-hidden="true">
+    <div class="intro-ticker-inner">
+      <span class="intro-ticker-item">Mechatronics Engineering</span>
+      <span class="intro-ticker-item">·</span>
+      <span class="intro-ticker-item">Commerce & Strategy</span>
+      <span class="intro-ticker-item">·</span>
+      <span class="intro-ticker-item">Robotics & Automation</span>
+      <span class="intro-ticker-item">·</span>
+      <span class="intro-ticker-item">University of Auckland</span>
+      <span class="intro-ticker-item">·</span>
+      <span class="intro-ticker-item">New Zealand</span>
+      <span class="intro-ticker-item">·</span>
+      <span class="intro-ticker-item">Mechatronics Engineering</span>
+      <span class="intro-ticker-item">·</span>
+      <span class="intro-ticker-item">Commerce & Strategy</span>
+      <span class="intro-ticker-item">·</span>
+      <span class="intro-ticker-item">Robotics & Automation</span>
+      <span class="intro-ticker-item">·</span>
+      <span class="intro-ticker-item">University of Auckland</span>
+      <span class="intro-ticker-item">·</span>
+      <span class="intro-ticker-item">New Zealand</span>
+      <span class="intro-ticker-item">·</span>
+    </div>
   </div>
 </div>
 
@@ -530,7 +593,7 @@
         <span class="h1-line"><span>Denz</span></span>
         <span class="h1-line"><span class="l2">Shinoy</span></span>
       </h1>
-      <p class="hero-sub">Part III Mechatronics Engineering & Commerce conjoint at the University of Auckland. I strive every day to be the best version of myself, and I am in constant pursuit of greatness in everything I achieve.</p>
+      <p class="hero-sub" data-words>Part III Mechatronics Engineering & Commerce conjoint at the University of Auckland. I strive every day to be the best version of myself, and I am in constant pursuit of greatness in everything I achieve.</p>
       <div class="status-pill"><span class="sdot"></span> Available for 2026 internships</div>
       <div class="hero-cta">
         <a href="#work" class="btn btn-primary">View my work →</a>
@@ -540,6 +603,10 @@
     <div class="photo-stage" aria-hidden="true">
       <div class="ring"></div>
       <div class="orbit"><span class="pip"></span></div>
+      <svg class="orbit-text" viewBox="0 0 300 300" aria-hidden="true">
+        <defs><path id="op" d="M150,150 m-143,0 a143,143 0 1,1 286,0 a143,143 0 1,1,-286,0"/></defs>
+        <text><textPath href="#op">MECHATRONICS · ROBOTICS · ENGINEERING · DESIGN · </textPath></text>
+      </svg>
       <div class="photos" id="photos">
         <div class="photo on"></div>
         <div class="photo"></div>
@@ -597,7 +664,7 @@
       <span class="proj-year">Young Enterprise · 2021–2023</span>
     </div>
     <ul>
-      <li>Founded and lead Quasar Clothing - a streetwear brand blending creativity, culture and entrepreneurship.</li>
+      <li>Founded and lead Quasar Clothing, a streetwear brand blending creativity, culture and entrepreneurship.</li>
       <li>Oversee branding, design direction, marketing, sales and day-to-day operations.</li>
       <li>Manage product development, supplier communication and the brand's online presence.</li>
       <li>Own budgeting and growth strategy, building the brand from the ground up.</li>
@@ -727,7 +794,7 @@
       </div>
       <div class="vf-word" data-par="0.26"><div><span class="vf-idx">01</span><h3>Family</h3></div></div>
     </div>
-    <p class="vf-text" data-par="0.05">The people who ground me. Everything I build, I build to make them proud - my first reason and my constant motivation.</p>
+    <p class="vf-text" data-par="0.05">The people who ground me. Everything I build, I build to make them proud. My first reason and my constant motivation.</p>
   </article>
 
   <article class="vf-item">
@@ -771,7 +838,7 @@
   <div class="hsticky">
     <div class="htrack" id="htrack">
       <article class="hpanel" style="justify-content:center">
-        <span class="sec-num" style="font-family:'Space Mono',monospace;color:var(--amber)">06 - keep going →</span>
+        <span class="sec-num" style="font-family:'Space Mono',monospace;color:var(--amber)">06 · keep going →</span>
         <div class="lead" style="margin-top:18px">The fuller<br><span>picture.</span></div>
         <p>There's more to me than the build - keep scrolling.</p>
       </article>
@@ -1022,8 +1089,9 @@
     enterBtn.addEventListener('click',reveal);
     addEventListener('keydown',e=>{if(e.key==='Enter'&&enterBtn.classList.contains('ready'))reveal();});
 
+    const bgNumEl=document.getElementById('introBgNum');
     if(reduce){
-      countEl.textContent='100'; barEl.style.width='100%'; enterBtn.classList.add('ready');
+      countEl.textContent='100'; barEl.style.width='100%'; if(bgNumEl)bgNumEl.textContent='100'; enterBtn.classList.add('ready');
       return;
     }
     const dur=1900,t0=performance.now();
@@ -1031,12 +1099,13 @@
       const p=Math.min((now-t0)/dur,1), e=1-Math.pow(1-p,2.4);
       const v=Math.round(e*100);
       countEl.textContent=v; barEl.style.width=v+'%';
+      if(bgNumEl) bgNumEl.textContent=v;
       if(p<1) requestAnimationFrame(tick);
       else enterBtn.classList.add('ready');
     })(t0);
   })();
 
-  // ---- custom trailing cursor (desktop, fine pointer only) ----
+  // ---- custom cursor: white exclusion orb (lags for a weighted, premium feel) ----
   (function(){
     if(reduce || matchMedia('(hover:none),(pointer:coarse)').matches) return;
     const ring=document.createElement('div'); ring.className='cursor-ring';
@@ -1047,14 +1116,34 @@
     addEventListener('mouseup',()=>ring.classList.remove('down'));
     addEventListener('mouseleave',()=>ring.classList.remove('active'));
     (function loop(){
-      rx+=(mx-rx)*0.2; ry+=(my-ry)*0.2;
+      rx+=(mx-rx)*0.13; ry+=(my-ry)*0.13;   /* slower lerp = weightier feel */
       ring.style.transform='translate('+rx+'px,'+ry+'px) translate(-50%,-50%)';
       requestAnimationFrame(loop);
     })();
-    const sel='a,button,.proj,.skill-card,.chip,.clink,.pdot,.award,.photo-stage';
+    const sel='a,button,.proj,.skill-card,.chip,.clink,.pdot,.award,.photo-stage,.vf-pic,.hpanel';
     document.querySelectorAll(sel).forEach(el=>{
       el.addEventListener('mouseenter',()=>ring.classList.add('hover'));
       el.addEventListener('mouseleave',()=>ring.classList.remove('hover'));
+    });
+  })();
+
+  // ---- 3D perspective card tilt ----
+  (function(){
+    if(reduce || matchMedia('(hover:none),(pointer:coarse)').matches) return;
+    document.querySelectorAll('.proj').forEach(card=>{
+      card.addEventListener('mouseenter',()=>{
+        card.style.transition='box-shadow .45s var(--ease),border-color .45s';
+      });
+      card.addEventListener('mousemove',e=>{
+        const r=card.getBoundingClientRect();
+        const x=((e.clientX-r.left)/r.width-.5)*2;
+        const y=((e.clientY-r.top)/r.height-.5)*2;
+        card.style.transform='perspective(900px) rotateY('+(x*5)+'deg) rotateX('+(-y*5)+'deg) translateY(-8px) scale(1.01)';
+      });
+      card.addEventListener('mouseleave',()=>{
+        card.style.transition='transform .65s var(--ease),box-shadow .45s var(--ease),border-color .45s';
+        card.style.transform='';
+      });
     });
   })();
 
