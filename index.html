@@ -425,15 +425,13 @@
   @keyframes scrollDot{0%{opacity:0;transform:translate(-50%,0)}25%{opacity:1}55%{opacity:1;transform:translate(-50%,11px)}100%{opacity:0;transform:translate(-50%,11px)}}
   @media(max-width:840px){.scroll-hint{display:none}}
 
-  /* ---- cursor: white exclusion orb — inverts whatever sits beneath it ---- */
-  .cursor-ring{position:fixed;top:0;left:0;width:44px;height:44px;
-    background:#fff;border-radius:50%;
-    pointer-events:none;z-index:9999;opacity:0;
-    mix-blend-mode:exclusion;will-change:transform;
-    transition:width .35s var(--ease),height .35s var(--ease),opacity .4s ease}
+  /* ---- custom trailing cursor (desktop, fine pointer) ---- */
+  .cursor-ring{position:fixed;top:0;left:0;width:9px;height:9px;background:var(--amber);border-radius:50%;
+    pointer-events:none;z-index:300;opacity:0;will-change:transform;
+    transition:width .25s var(--ease),height .25s var(--ease),background .25s,opacity .35s ease}
   .cursor-ring.active{opacity:1}
-  .cursor-ring.hover{width:80px;height:80px}
-  .cursor-ring.down{width:22px;height:22px}
+  .cursor-ring.hover{width:18px;height:18px;background:var(--amber-deep)}
+  .cursor-ring.down{width:6px;height:6px}
   @media(hover:none),(pointer:coarse){.cursor-ring{display:none}}
 
   /* ---- values: light flow, full-bleed photos, title over image, parallax depth ---- */
@@ -457,8 +455,8 @@
     color:#FFF7EC;text-shadow:0 2px 26px rgba(20,14,9,.55),0 1px 6px rgba(20,14,9,.45)}
   .vf-word>div{display:flex;flex-direction:column;align-items:center;gap:10px}
   .vf-word .vf-idx{font-family:'Space Mono',monospace;font-size:15px;color:rgba(255,247,236,.85)}
-  .vf-word h3{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:clamp(44px,11vw,150px);
-    letter-spacing:-3px;line-height:.85}
+  .vf-word h3{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:clamp(56px,13.5vw,190px);
+    letter-spacing:-4px;line-height:.82}
   /* explanation appears afterwards, centred under the image */
   .vf-text{max-width:880px;margin:7vh auto 0;padding:0 28px;text-align:center;will-change:transform;
     font-family:'Space Grotesk',sans-serif;font-weight:400;font-size:clamp(20px,3vw,32px);
@@ -469,28 +467,6 @@
   .grain{position:fixed;inset:0;z-index:998;pointer-events:none;opacity:.04;
     background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.78' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E");
     background-size:200px}
-
-  /* ---- orbit text ring around hero photo dial ---- */
-  .orbit-text{position:absolute;inset:-14px;width:calc(100% + 28px);height:calc(100% + 28px);
-    pointer-events:none;animation:spin 30s linear infinite;opacity:.55;overflow:visible}
-  .orbit-text text{font-family:'Space Mono',monospace;font-size:11.5px;letter-spacing:4.5px;
-    text-transform:uppercase;fill:var(--text-soft)}
-
-  /* ---- intro: ambient large counter in background ---- */
-  .intro-bg-num{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
-    pointer-events:none;overflow:hidden;
-    font-family:'Space Grotesk',sans-serif;font-weight:700;
-    font-size:min(55vw,600px);line-height:1;letter-spacing:-14px;
-    color:rgba(231,203,163,.055);user-select:none;z-index:1;
-    opacity:0;animation:introFade .6s var(--ease) 1s forwards}
-
-  /* ---- intro: scrolling credential ticker at the bottom ---- */
-  .intro-ticker{position:absolute;bottom:0;left:0;right:0;z-index:3;overflow:hidden;
-    border-top:1px solid rgba(231,203,163,.12);padding:13px 0}
-  .intro-ticker-inner{display:flex;width:max-content;animation:introTick 26s linear infinite}
-  .intro-ticker-item{font-family:'Space Mono',monospace;font-size:10px;letter-spacing:3.5px;
-    text-transform:uppercase;color:rgba(231,203,163,.28);white-space:nowrap;padding-right:40px}
-  @keyframes introTick{from{transform:translateX(0)}to{transform:translateX(-50%)}}
 
   /* ---- 3D card tilt: smooth spring-back ---- */
   .proj{transform-style:preserve-3d}
@@ -527,7 +503,6 @@
 
 <div class="intro" id="intro" role="dialog" aria-label="Welcome">
   <div class="intro-bg" aria-hidden="true"></div>
-  <div class="intro-bg-num" id="introBgNum" aria-hidden="true">0</div>
   <div class="intro-inner">
     <div class="intro-eyebrow">Mechatronics · Robotics · Engineering</div>
     <div class="intro-name">
@@ -539,30 +514,6 @@
       <span class="intro-bar"><i id="introBar"></i></span>
     </div>
     <button class="intro-enter" id="introEnter" type="button">Enter portfolio <span>→</span></button>
-  </div>
-  <div class="intro-ticker" aria-hidden="true">
-    <div class="intro-ticker-inner">
-      <span class="intro-ticker-item">Mechatronics Engineering</span>
-      <span class="intro-ticker-item">·</span>
-      <span class="intro-ticker-item">Commerce & Strategy</span>
-      <span class="intro-ticker-item">·</span>
-      <span class="intro-ticker-item">Robotics & Automation</span>
-      <span class="intro-ticker-item">·</span>
-      <span class="intro-ticker-item">University of Auckland</span>
-      <span class="intro-ticker-item">·</span>
-      <span class="intro-ticker-item">New Zealand</span>
-      <span class="intro-ticker-item">·</span>
-      <span class="intro-ticker-item">Mechatronics Engineering</span>
-      <span class="intro-ticker-item">·</span>
-      <span class="intro-ticker-item">Commerce & Strategy</span>
-      <span class="intro-ticker-item">·</span>
-      <span class="intro-ticker-item">Robotics & Automation</span>
-      <span class="intro-ticker-item">·</span>
-      <span class="intro-ticker-item">University of Auckland</span>
-      <span class="intro-ticker-item">·</span>
-      <span class="intro-ticker-item">New Zealand</span>
-      <span class="intro-ticker-item">·</span>
-    </div>
   </div>
 </div>
 
@@ -603,10 +554,6 @@
     <div class="photo-stage" aria-hidden="true">
       <div class="ring"></div>
       <div class="orbit"><span class="pip"></span></div>
-      <svg class="orbit-text" viewBox="0 0 300 300" aria-hidden="true">
-        <defs><path id="op" d="M150,150 m-143,0 a143,143 0 1,1 286,0 a143,143 0 1,1,-286,0"/></defs>
-        <text><textPath href="#op">MECHATRONICS · ROBOTICS · ENGINEERING · DESIGN · </textPath></text>
-      </svg>
       <div class="photos" id="photos">
         <div class="photo on"></div>
         <div class="photo"></div>
@@ -787,48 +734,48 @@
 
   <article class="vf-item">
     <div class="vf-stage">
-      <div class="vf-img" data-par="-0.07">
+      <div class="vf-img" data-par="-0.18">
         <div class="vf-pic" style="background-image:url('FAM1.jpg')"></div>
         <div class="vf-pic" style="background-image:url('FAM2.jpg')"></div>
         <div class="vf-pic" style="background-image:url('FAM3.jpg')"></div>
       </div>
-      <div class="vf-word" data-par="0.26"><div><span class="vf-idx">01</span><h3>Family</h3></div></div>
+      <div class="vf-word" data-par="0.55"><div><span class="vf-idx">01</span><h3>Family</h3></div></div>
     </div>
     <p class="vf-text" data-par="0.05">The people who ground me. Everything I build, I build to make them proud. My first reason and my constant motivation.</p>
   </article>
 
   <article class="vf-item">
     <div class="vf-stage">
-      <div class="vf-img" data-par="-0.07">
+      <div class="vf-img" data-par="-0.18">
         <div class="vf-pic" style="background-image:url('COM1.JPG')"></div>
         <div class="vf-pic" style="background-image:url('COM2.jpg')"></div>
         <div class="vf-pic" style="background-image:url('COM3.jpg');background-size:auto 135%;background-position:center bottom"></div>
       </div>
-      <div class="vf-word" data-par="0.26"><div><span class="vf-idx">02</span><h3>Companionship</h3></div></div>
+      <div class="vf-word" data-par="0.55"><div><span class="vf-idx">02</span><h3>Companionship</h3></div></div>
     </div>
     <p class="vf-text" data-par="0.05">Nothing great is built alone - loyal friends and tight-knit teams who challenge each other and rise together.</p>
   </article>
 
   <article class="vf-item">
     <div class="vf-stage">
-      <div class="vf-img" data-par="-0.07">
+      <div class="vf-img" data-par="-0.18">
         <div class="vf-pic" style="background-image:url('SPO1.jpg')"></div>
         <div class="vf-pic" style="background-image:url('SPO3.jpg')"></div>
         <div class="vf-pic" style="background-image:url('SPO2.JPG')"></div>
       </div>
-      <div class="vf-word" data-par="0.26"><div><span class="vf-idx">03</span><h3>Sport</h3></div></div>
+      <div class="vf-word" data-par="0.55"><div><span class="vf-idx">03</span><h3>Sport</h3></div></div>
     </div>
     <p class="vf-text" data-par="0.05">Discipline, resilience and teamwork - on the court, and in everything I do.</p>
   </article>
 
   <article class="vf-item">
     <div class="vf-stage">
-      <div class="vf-img" data-par="-0.07">
+      <div class="vf-img" data-par="-0.18">
         <div class="vf-pic" style="background-image:url('FUL1.jpg')"></div>
         <div class="vf-pic" style="background-image:url('FUL2.jpg')"></div>
         <div class="vf-pic" style="background-image:url('FUL3.jpg')"></div>
       </div>
-      <div class="vf-word" data-par="0.26"><div><span class="vf-idx">04</span><h3>Fulfillment</h3></div></div>
+      <div class="vf-word" data-par="0.55"><div><span class="vf-idx">04</span><h3>Fulfillment</h3></div></div>
     </div>
     <p class="vf-text" data-par="0.05">Real fulfillment lives outside the workshop too. Whether I'm out fishing, on the golf course, or making the most of a good day with good people, it keeps me balanced, sharp and grateful, and I bring that same energy and perspective back to everything I build.</p>
   </article>
@@ -1089,9 +1036,8 @@
     enterBtn.addEventListener('click',reveal);
     addEventListener('keydown',e=>{if(e.key==='Enter'&&enterBtn.classList.contains('ready'))reveal();});
 
-    const bgNumEl=document.getElementById('introBgNum');
     if(reduce){
-      countEl.textContent='100'; barEl.style.width='100%'; if(bgNumEl)bgNumEl.textContent='100'; enterBtn.classList.add('ready');
+      countEl.textContent='100'; barEl.style.width='100%'; enterBtn.classList.add('ready');
       return;
     }
     const dur=1900,t0=performance.now();
@@ -1099,13 +1045,12 @@
       const p=Math.min((now-t0)/dur,1), e=1-Math.pow(1-p,2.4);
       const v=Math.round(e*100);
       countEl.textContent=v; barEl.style.width=v+'%';
-      if(bgNumEl) bgNumEl.textContent=v;
       if(p<1) requestAnimationFrame(tick);
       else enterBtn.classList.add('ready');
     })(t0);
   })();
 
-  // ---- custom cursor: white exclusion orb (lags for a weighted, premium feel) ----
+  // ---- custom trailing cursor (desktop, fine pointer only) ----
   (function(){
     if(reduce || matchMedia('(hover:none),(pointer:coarse)').matches) return;
     const ring=document.createElement('div'); ring.className='cursor-ring';
@@ -1116,11 +1061,11 @@
     addEventListener('mouseup',()=>ring.classList.remove('down'));
     addEventListener('mouseleave',()=>ring.classList.remove('active'));
     (function loop(){
-      rx+=(mx-rx)*0.13; ry+=(my-ry)*0.13;   /* slower lerp = weightier feel */
+      rx+=(mx-rx)*0.2; ry+=(my-ry)*0.2;
       ring.style.transform='translate('+rx+'px,'+ry+'px) translate(-50%,-50%)';
       requestAnimationFrame(loop);
     })();
-    const sel='a,button,.proj,.skill-card,.chip,.clink,.pdot,.award,.photo-stage,.vf-pic,.hpanel';
+    const sel='a,button,.proj,.skill-card,.chip,.clink,.pdot,.award,.photo-stage';
     document.querySelectorAll(sel).forEach(el=>{
       el.addEventListener('mouseenter',()=>ring.classList.add('hover'));
       el.addEventListener('mouseleave',()=>ring.classList.remove('hover'));
