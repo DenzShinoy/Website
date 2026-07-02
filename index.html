@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Denz Shinoy - Mechatronics Engineer</title>
+<title>Denz Shinoy · Mechatronics Engineer</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
@@ -51,6 +51,7 @@
     backdrop-filter:blur(16px) saturate(150%);
     -webkit-backdrop-filter:blur(16px) saturate(150%);
     background:rgba(244,236,224,.66);
+    background:color-mix(in srgb,var(--bg) 70%,transparent);   /* follows the theme as it darkens */
     border-bottom:1px solid transparent;
     box-shadow:inset 0 -1px 0 rgba(255,255,255,.25);
     transition:border-color .4s var(--ease);
@@ -207,7 +208,10 @@
   .marquee-item{display:flex;align-items:center;gap:30px;padding-right:30px;
     font-family:'Space Grotesk',sans-serif;font-weight:700;text-transform:uppercase;
     font-size:clamp(26px,5vw,52px);letter-spacing:-1.5px;line-height:1;white-space:nowrap;color:var(--text)}
-  .marquee-item .o{color:var(--text)}   /* monotone - all words solid */
+  .marquee-item .o{color:var(--text)}   /* fallback: solid */
+  @supports(-webkit-text-stroke:1px #000){
+    .marquee-item .o{color:transparent;-webkit-text-stroke:1.5px var(--text)}   /* alternate words outlined */
+  }
   .marquee-item .dot{width:11px;height:11px;border-radius:50%;flex:none;background:var(--amber)}
 
   section{padding:96px 0}
@@ -455,13 +459,45 @@
     color:#FFF7EC;text-shadow:0 2px 26px rgba(20,14,9,.55),0 1px 6px rgba(20,14,9,.45)}
   .vf-word>div{display:flex;flex-direction:column;align-items:center;gap:10px}
   .vf-word .vf-idx{font-family:'Space Mono',monospace;font-size:15px;color:rgba(255,247,236,.85)}
-  .vf-word h3{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:clamp(44px,11vw,150px);
-    letter-spacing:-3px;line-height:.85}
+  .vf-word h3{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:clamp(56px,13.5vw,190px);
+    letter-spacing:-4px;line-height:.82}
   /* explanation appears afterwards, centred under the image */
   .vf-text{max-width:880px;margin:7vh auto 0;padding:0 28px;text-align:center;will-change:transform;
     font-family:'Space Grotesk',sans-serif;font-weight:400;font-size:clamp(20px,3vw,32px);
     line-height:1.45;letter-spacing:-.5px;color:var(--text)}
   @media(max-width:680px){.vf-item{margin:8vh 0}.vf-img{flex-direction:column;gap:10px}.vf-pic{flex:0 0 auto;width:100%;height:46vh}.vf-text{margin-top:5vh}}
+
+  /* ---- scroll reveals: photos wipe open like shutters, staggered left→right ---- */
+  html.js .vf-pic{transition:clip-path 1.25s var(--ease)}
+  html.js .vf-img .vf-pic:nth-child(2){transition-delay:.13s}
+  html.js .vf-img .vf-pic:nth-child(3){transition-delay:.26s}
+  html.js .vf-stage:not(.is-in) .vf-pic{clip-path:inset(46% 0 46% 0)}
+  html.js .vf-stage.is-in .vf-pic{clip-path:inset(0 0 0 0)}
+  /* value titles rise letter-by-letter; index number follows */
+  .split-letters .sl{display:inline-block;opacity:0;transform:translateY(.55em);
+    transition:opacity .55s var(--ease) var(--ld,0ms),transform .85s var(--ease) var(--ld,0ms)}
+  .vf-stage.is-in .sl,.vflow-title.is-in .sl{opacity:1;transform:none}
+  html.js .vf-word .vf-idx{opacity:0;transform:translateY(16px);
+    transition:opacity .7s var(--ease) .55s,transform .7s var(--ease) .55s}
+  html.js .vf-stage.is-in .vf-idx{opacity:1;transform:none}
+
+  /* perf: freeze the hero's infinite animations while it's scrolled out of view
+     (purely invisible - they resume the moment the hero is back on screen) */
+  html.hero-off .hero-aurora .blob,html.hero-off .photo-stage::before,html.hero-off .photo-stage::after,
+  html.hero-off .orbit,html.hero-off .photos::before,html.hero-off .status-pill .sdot,
+  html.hero-off h1 .l2,html.hero-off .sh-mouse span{animation-play-state:paused}
+
+  /* ---- film grain overlay ---- */
+  .grain{position:fixed;inset:0;z-index:998;pointer-events:none;opacity:.04;transform:translateZ(0);
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.78' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E");
+    background-size:200px}
+
+  /* ---- 3D card tilt: smooth spring-back ---- */
+  .proj{transform-style:preserve-3d}
+
+  /* ---- section: full-width ruled separator ---- */
+  .sec-rule{display:block;width:100%;height:1px;background:linear-gradient(90deg,transparent,var(--border) 20%,var(--border) 80%,transparent);margin-bottom:56px;opacity:0;transition:opacity .9s var(--ease) .2s}
+  .sec-rule.is-in{opacity:1}
 
   @media(prefers-reduced-motion:reduce){
     /* keep gentle opacity fades; remove only large motion/transforms */
@@ -481,11 +517,15 @@
     .intro-bg,.intro::after,.sh-mouse span{animation:none!important}
     .intro-eyebrow,.intro-meter,.intro-name .il>span{animation:none!important;opacity:1!important;transform:none!important}
     .cursor-ring{display:none}
+    .vf-pic{clip-path:none!important;transition:none!important}
+    .split-letters .sl,.vf-word .vf-idx{opacity:1!important;transform:none!important;transition:opacity .5s ease!important}
   }
 </style>
 </head>
 <body>
 <script>document.documentElement.className+=' js intro-lock';</script>
+
+<div class="grain" aria-hidden="true"></div>
 
 <div class="intro" id="intro" role="dialog" aria-label="Welcome">
   <div class="intro-bg" aria-hidden="true"></div>
@@ -530,7 +570,7 @@
         <span class="h1-line"><span>Denz</span></span>
         <span class="h1-line"><span class="l2">Shinoy</span></span>
       </h1>
-      <p class="hero-sub">Part III Mechatronics Engineering & Commerce conjoint at the University of Auckland. I strive every day to be the best version of myself, and I am in constant pursuit of greatness in everything I achieve.</p>
+      <p class="hero-sub" data-words>Part III Mechatronics Engineering & Commerce conjoint at the University of Auckland. I strive every day to be the best version of myself, and I am in constant pursuit of greatness in everything I achieve.</p>
       <div class="status-pill"><span class="sdot"></span> Available for 2026 internships</div>
       <div class="hero-cta">
         <a href="#work" class="btn btn-primary">View my work →</a>
@@ -597,7 +637,7 @@
       <span class="proj-year">Young Enterprise · 2021–2023</span>
     </div>
     <ul>
-      <li>Founded and lead Quasar Clothing - a streetwear brand blending creativity, culture and entrepreneurship.</li>
+      <li>Founded and lead Quasar Clothing, a streetwear brand blending creativity, culture and entrepreneurship.</li>
       <li>Oversee branding, design direction, marketing, sales and day-to-day operations.</li>
       <li>Manage product development, supplier communication and the brand's online presence.</li>
       <li>Own budgeting and growth strategy, building the brand from the ground up.</li>
@@ -720,48 +760,48 @@
 
   <article class="vf-item">
     <div class="vf-stage">
-      <div class="vf-img" data-par="-0.07">
+      <div class="vf-img" data-par="-0.18">
         <div class="vf-pic" style="background-image:url('FAM1.jpg')"></div>
         <div class="vf-pic" style="background-image:url('FAM2.jpg')"></div>
         <div class="vf-pic" style="background-image:url('FAM3.jpg')"></div>
       </div>
-      <div class="vf-word" data-par="0.26"><div><span class="vf-idx">01</span><h3>Family</h3></div></div>
+      <div class="vf-word" data-par="0.55"><div><span class="vf-idx">01</span><h3>Family</h3></div></div>
     </div>
     <p class="vf-text" data-par="0.05">The people who ground me. Everything I build, I build to make them proud. My first reason and my constant motivation.</p>
   </article>
 
   <article class="vf-item">
     <div class="vf-stage">
-      <div class="vf-img" data-par="-0.07">
+      <div class="vf-img" data-par="-0.18">
         <div class="vf-pic" style="background-image:url('COM1.JPG')"></div>
         <div class="vf-pic" style="background-image:url('COM2.jpg')"></div>
         <div class="vf-pic" style="background-image:url('COM3.jpg');background-size:auto 135%;background-position:center bottom"></div>
       </div>
-      <div class="vf-word" data-par="0.26"><div><span class="vf-idx">02</span><h3>Companionship</h3></div></div>
+      <div class="vf-word" data-par="0.55"><div><span class="vf-idx">02</span><h3>Companionship</h3></div></div>
     </div>
     <p class="vf-text" data-par="0.05">Nothing great is built alone. loyal friends and tight-knit teams who challenge each other and rise together.</p>
   </article>
 
   <article class="vf-item">
     <div class="vf-stage">
-      <div class="vf-img" data-par="-0.07">
+      <div class="vf-img" data-par="-0.18">
         <div class="vf-pic" style="background-image:url('SPO1.jpg')"></div>
         <div class="vf-pic" style="background-image:url('SPO3.jpg')"></div>
         <div class="vf-pic" style="background-image:url('SPO2.JPG')"></div>
       </div>
-      <div class="vf-word" data-par="0.26"><div><span class="vf-idx">03</span><h3>Sport</h3></div></div>
+      <div class="vf-word" data-par="0.55"><div><span class="vf-idx">03</span><h3>Sport</h3></div></div>
     </div>
     <p class="vf-text" data-par="0.05">Discipline, resilience and teamwork. On the court, off the court, and in everything I do.</p>
   </article>
 
   <article class="vf-item">
     <div class="vf-stage">
-      <div class="vf-img" data-par="-0.07">
+      <div class="vf-img" data-par="-0.18">
         <div class="vf-pic" style="background-image:url('FUL1.jpg')"></div>
         <div class="vf-pic" style="background-image:url('FUL2.jpg')"></div>
         <div class="vf-pic" style="background-image:url('FUL3.jpg')"></div>
       </div>
-      <div class="vf-word" data-par="0.26"><div><span class="vf-idx">04</span><h3>Fulfillment</h3></div></div>
+      <div class="vf-word" data-par="0.55"><div><span class="vf-idx">04</span><h3>Fulfillment</h3></div></div>
     </div>
     <p class="vf-text" data-par="0.05">Real fulfillment lives outside the workshop too. Whether I'm out fishing or on the golf course. It keeps me balanced, sharp and grateful, and I bring that same energy and perspective back to everything I build.</p>
   </article>
@@ -771,7 +811,7 @@
   <div class="hsticky">
     <div class="htrack" id="htrack">
       <article class="hpanel" style="justify-content:center">
-        <span class="sec-num" style="font-family:'Space Mono',monospace;color:var(--amber)">06 - keep going →</span>
+        <span class="sec-num" style="font-family:'Space Mono',monospace;color:var(--amber)">06 · keep going →</span>
         <div class="lead" style="margin-top:18px">The fuller<br><span>picture.</span></div>
         <p>There's more to me than the build - keep scrolling.</p>
       </article>
@@ -847,7 +887,7 @@
   photos.forEach((_,i)=>{const b=document.createElement('button');b.className='pdot'+(i===0?' on':'');b.setAttribute('aria-label','Show photo '+(i+1));b.onclick=()=>show(i,true);dotWrap.appendChild(b);});
   const dots=[...dotWrap.children];
   function show(n,manual){photos[pi].classList.remove('on');dots[pi].classList.remove('on');pi=n;photos[pi].classList.add('on');dots[pi].classList.add('on');if(manual)reset();}
-  function next(){show((pi+1)%photos.length);}
+  function next(){if(heroOff)return;show((pi+1)%photos.length);}   // skip cycling while hero is off-screen
   function reset(){clearInterval(ptimer);ptimer=setInterval(next,3500);}
   if(!matchMedia('(prefers-reduced-motion:reduce)').matches)reset();
 
@@ -868,13 +908,18 @@
   }
   function revealCheck(){
     const trigger=innerHeight*0.9;
-    for(const el of animEls){ if(!el._done && el.getBoundingClientRect().top<trigger) fire(el); }
+    let fired=false;
+    for(const el of animEls){ if(!el._done && el.getBoundingClientRect().top<trigger){fire(el);fired=true;} }
+    if(fired) animEls=animEls.filter(el=>!el._done);   // perf: stop measuring elements already revealed
   }
-  let ticking=false;
+  let ticking=false,heroOff=false;
   function onScroll(){
     if(ticking)return; ticking=true;
     requestAnimationFrame(()=>{
       nav.classList.toggle('scrolled',scrollY>20);
+      // pause the hero's infinite animations (blobs, dial, sheen) once it's out of view
+      const off=scrollY>innerHeight*1.15;
+      if(off!==heroOff){heroOff=off;document.documentElement.classList.toggle('hero-off',off);}
       const max=document.documentElement.scrollHeight-innerHeight;
       bar.style.transform='scaleX('+(max>0?scrollY/max:0)+')';
       if(stage&&!reduce&&scrollY<innerHeight) stage.style.transform='translateY('+scrollY*0.12+'px)';
@@ -903,9 +948,27 @@
       hmax=0;
     }
   }
+  // smooth light→dark palette shift while the fuller-picture chapter is on screen
+  const TH_LIGHT={bg:[244,236,224],surface:[251,245,234],text:[40,29,20],soft:[122,100,80],border:[231,214,191]};
+  const TH_DARK ={bg:[26,18,11],  surface:[38,28,19],   text:[244,236,224],soft:[176,150,124],border:[64,48,33]};
+  let thLast=-1;
+  function themeMix(t){
+    if(t===thLast)return; thLast=t;
+    const s=document.documentElement.style;
+    const mix=(a,b)=>'rgb('+a.map((v,i)=>Math.round(v+(b[i]-v)*t)).join(',')+')';
+    s.setProperty('--bg',mix(TH_LIGHT.bg,TH_DARK.bg));
+    s.setProperty('--surface',mix(TH_LIGHT.surface,TH_DARK.surface));
+    s.setProperty('--text',mix(TH_LIGHT.text,TH_DARK.text));
+    s.setProperty('--text-soft',mix(TH_LIGHT.soft,TH_DARK.soft));
+    s.setProperty('--border',mix(TH_LIGHT.border,TH_DARK.border));
+  }
   function horizonUpdate(){
     if(!horizon)return;
     const r=horizon.getBoundingClientRect();
+    // darken as the chapter arrives, then stay dark for the rest of the page
+    const t=Math.min(Math.max(1-r.top/(innerHeight*0.7),0),1);
+    const e=t*t*(3-2*t);                          // smoothstep for a gentle blend
+    themeMix(Math.round(e*160)/160);              // quantise: skips redundant full-page style recalcs
     if(horizon.classList.contains('pin') && hmax>0){
       const range=horizon.offsetHeight - innerHeight;
       const p=Math.min(Math.max(-r.top/range,0),1);
@@ -942,6 +1005,22 @@
     el.innerHTML=''; el.appendChild(frag);
   });
 
+  // split value titles into letters for a staggered kinetic rise
+  document.querySelectorAll('.vf-word h3,.vflow-title h2').forEach(el=>{
+    el.classList.add('split-letters');
+    [...el.childNodes].forEach(n=>{
+      if(n.nodeType!==3)return;                     // keep <br> etc. intact
+      const frag=document.createDocumentFragment();
+      for(const ch of n.textContent){
+        if(ch.trim()===''){frag.appendChild(document.createTextNode(ch));continue;}
+        const s=document.createElement('span');s.className='sl';s.textContent=ch;
+        frag.appendChild(s);
+      }
+      el.replaceChild(frag,n);
+    });
+    el.querySelectorAll('.sl').forEach((s,i)=>s.style.setProperty('--ld',(i*38)+'ms'));
+  });
+
   // group stagger delays for data-anim siblings
   document.querySelectorAll('[data-anim]').forEach(el=>{
     let i=0,p=el.previousElementSibling;
@@ -957,7 +1036,7 @@
 
   // collect animated elements - reveal on scroll for everyone
   // (reduced-motion users get gentle opacity fades via CSS; others get full motion)
-  animEls=[...document.querySelectorAll('[data-anim],[data-words],.sec-head,.title-wrap')];
+  animEls=[...document.querySelectorAll('[data-anim],[data-words],.sec-head,.title-wrap,.vf-stage,.vflow-title')];
   addEventListener('scroll',onScroll,{passive:true});
   addEventListener('resize',()=>{revealCheck();setupHorizon();horizonUpdate();parSetup();parallax();},{passive:true});
   requestAnimationFrame(()=>{nav.classList.toggle('scrolled',scrollY>20);setupHorizon();parSetup();parallax();revealCheck();horizonUpdate();});
@@ -965,6 +1044,7 @@
 
   // ---- values: parallax depth (title + each block scroll at different speeds) ----
   const parEls=[...document.querySelectorAll('[data-par]')];
+  const parSpeed=parEls.map(el=>parseFloat(el.dataset.par)||0);   // parsed once, not per frame
   let parBase=[];
   function parSetup(){
     parBase=parEls.map(el=>{                       // document-relative centre, ignores transforms
@@ -978,8 +1058,7 @@
     for(let i=0;i<parEls.length;i++){
       const d=parBase[i]-viewMid;
       if(Math.abs(d)>lim) continue;                 // skip elements well off-screen
-      const speed=parseFloat(parEls[i].dataset.par)||0;
-      parEls[i].style.transform='translate3d(0,'+(d*speed).toFixed(2)+'px,0)';
+      parEls[i].style.transform='translate3d(0,'+(d*parSpeed[i]).toFixed(2)+'px,0)';
     }
   }
 
@@ -988,15 +1067,20 @@
     const track=document.getElementById('mtrack');
     if(track && !reduce){
       const half=track.scrollWidth/2;       // width of one copy
-      let offset=0,lastY=scrollY,skew=0;
+      let offset=0,lastY=scrollY,skew=0,visible=true;
       const base=0.5;
+      // perf: no per-frame work while the strip is off-screen (it looks identical)
+      new IntersectionObserver(en=>{visible=en[0].isIntersecting},{rootMargin:'80px'})
+        .observe(document.getElementById('marquee'));
       (function tick(){
         const dv=scrollY-lastY; lastY=scrollY;
-        offset-=base+Math.min(Math.abs(dv)*0.6,42);   // scroll speed boosts the marquee
-        if(offset<=-half) offset+=half;
-        const target=Math.max(-9,Math.min(9,dv*0.28)); // lean into scroll direction
-        skew+=(target-skew)*0.12;
-        track.style.transform='translateX('+offset+'px) skewX('+skew+'deg)';
+        if(visible){
+          offset-=base+Math.min(Math.abs(dv)*0.6,42);   // scroll speed boosts the marquee
+          if(offset<=-half) offset+=half;
+          const target=Math.max(-9,Math.min(9,dv*0.28)); // lean into scroll direction
+          skew+=(target-skew)*0.12;
+          track.style.transform='translateX('+offset+'px) skewX('+skew+'deg)';
+        }
         requestAnimationFrame(tick);
       })();
     }
@@ -1047,14 +1131,37 @@
     addEventListener('mouseup',()=>ring.classList.remove('down'));
     addEventListener('mouseleave',()=>ring.classList.remove('active'));
     (function loop(){
-      rx+=(mx-rx)*0.2; ry+=(my-ry)*0.2;
-      ring.style.transform='translate('+rx+'px,'+ry+'px) translate(-50%,-50%)';
+      const dx=mx-rx,dy=my-ry;
+      if(Math.abs(dx)+Math.abs(dy)>0.05){          // perf: idle mouse = no style writes
+        rx+=dx*0.2; ry+=dy*0.2;
+        ring.style.transform='translate('+rx+'px,'+ry+'px) translate(-50%,-50%)';
+      }
       requestAnimationFrame(loop);
     })();
     const sel='a,button,.proj,.skill-card,.chip,.clink,.pdot,.award,.photo-stage';
     document.querySelectorAll(sel).forEach(el=>{
       el.addEventListener('mouseenter',()=>ring.classList.add('hover'));
       el.addEventListener('mouseleave',()=>ring.classList.remove('hover'));
+    });
+  })();
+
+  // ---- 3D perspective card tilt ----
+  (function(){
+    if(reduce || matchMedia('(hover:none),(pointer:coarse)').matches) return;
+    document.querySelectorAll('.proj').forEach(card=>{
+      card.addEventListener('mouseenter',()=>{
+        card.style.transition='box-shadow .45s var(--ease),border-color .45s';
+      });
+      card.addEventListener('mousemove',e=>{
+        const r=card.getBoundingClientRect();
+        const x=((e.clientX-r.left)/r.width-.5)*2;
+        const y=((e.clientY-r.top)/r.height-.5)*2;
+        card.style.transform='perspective(900px) rotateY('+(x*5)+'deg) rotateX('+(-y*5)+'deg) translateY(-8px) scale(1.01)';
+      });
+      card.addEventListener('mouseleave',()=>{
+        card.style.transition='transform .65s var(--ease),box-shadow .45s var(--ease),border-color .45s';
+        card.style.transform='';
+      });
     });
   })();
 
