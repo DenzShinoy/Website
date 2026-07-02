@@ -481,8 +481,14 @@
     transition:opacity .7s var(--ease) .55s,transform .7s var(--ease) .55s}
   html.js .vf-stage.is-in .vf-idx{opacity:1;transform:none}
 
+  /* perf: freeze the hero's infinite animations while it's scrolled out of view
+     (purely invisible - they resume the moment the hero is back on screen) */
+  html.hero-off .hero-aurora .blob,html.hero-off .photo-stage::before,html.hero-off .photo-stage::after,
+  html.hero-off .orbit,html.hero-off .photos::before,html.hero-off .status-pill .sdot,
+  html.hero-off h1 .l2,html.hero-off .sh-mouse span{animation-play-state:paused}
+
   /* ---- film grain overlay ---- */
-  .grain{position:fixed;inset:0;z-index:998;pointer-events:none;opacity:.04;
+  .grain{position:fixed;inset:0;z-index:998;pointer-events:none;opacity:.04;transform:translateZ(0);
     background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.78' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E");
     background-size:200px}
 
@@ -881,7 +887,7 @@
   photos.forEach((_,i)=>{const b=document.createElement('button');b.className='pdot'+(i===0?' on':'');b.setAttribute('aria-label','Show photo '+(i+1));b.onclick=()=>show(i,true);dotWrap.appendChild(b);});
   const dots=[...dotWrap.children];
   function show(n,manual){photos[pi].classList.remove('on');dots[pi].classList.remove('on');pi=n;photos[pi].classList.add('on');dots[pi].classList.add('on');if(manual)reset();}
-  function next(){show((pi+1)%photos.length);}
+  function next(){if(heroOff)return;show((pi+1)%photos.length);}   // skip cycling while hero is off-screen
   function reset(){clearInterval(ptimer);ptimer=setInterval(next,3500);}
   if(!matchMedia('(prefers-reduced-motion:reduce)').matches)reset();
 
@@ -902,13 +908,18 @@
   }
   function revealCheck(){
     const trigger=innerHeight*0.9;
-    for(const el of animEls){ if(!el._done && el.getBoundingClientRect().top<trigger) fire(el); }
+    let fired=false;
+    for(const el of animEls){ if(!el._done && el.getBoundingClientRect().top<trigger){fire(el);fired=true;} }
+    if(fired) animEls=animEls.filter(el=>!el._done);   // perf: stop measuring elements already revealed
   }
-  let ticking=false;
+  let ticking=false,heroOff=false;
   function onScroll(){
     if(ticking)return; ticking=true;
     requestAnimationFrame(()=>{
       nav.classList.toggle('scrolled',scrollY>20);
+      // pause the hero's infinite animations (blobs, dial, sheen) once it's out of view
+      const off=scrollY>innerHeight*1.15;
+      if(off!==heroOff){heroOff=off;document.documentElement.classList.toggle('hero-off',off);}
       const max=document.documentElement.scrollHeight-innerHeight;
       bar.style.transform='scaleX('+(max>0?scrollY/max:0)+')';
       if(stage&&!reduce&&scrollY<innerHeight) stage.style.transform='translateY('+scrollY*0.12+'px)';
@@ -954,12 +965,10 @@
   function horizonUpdate(){
     if(!horizon)return;
     const r=horizon.getBoundingClientRect();
-    // darken as the chapter arrives, lighten as it hands over to contact
-    const clamp01=x=>Math.min(Math.max(x,0),1);
-    const tIn=clamp01(1-r.top/(innerHeight*0.7));
-    const tOut=clamp01((r.bottom-innerHeight*0.25)/(innerHeight*0.65));
-    const t=Math.min(tIn,tOut);
-    themeMix(t*t*(3-2*t));                        // smoothstep for a gentle blend
+    // darken as the chapter arrives, then stay dark for the rest of the page
+    const t=Math.min(Math.max(1-r.top/(innerHeight*0.7),0),1);
+    const e=t*t*(3-2*t);                          // smoothstep for a gentle blend
+    themeMix(Math.round(e*160)/160);              // quantise: skips redundant full-page style recalcs
     if(horizon.classList.contains('pin') && hmax>0){
       const range=horizon.offsetHeight - innerHeight;
       const p=Math.min(Math.max(-r.top/range,0),1);
@@ -1035,6 +1044,7 @@
 
   // ---- values: parallax depth (title + each block scroll at different speeds) ----
   const parEls=[...document.querySelectorAll('[data-par]')];
+  const parSpeed=parEls.map(el=>parseFloat(el.dataset.par)||0);   // parsed once, not per frame
   let parBase=[];
   function parSetup(){
     parBase=parEls.map(el=>{                       // document-relative centre, ignores transforms
@@ -1048,8 +1058,7 @@
     for(let i=0;i<parEls.length;i++){
       const d=parBase[i]-viewMid;
       if(Math.abs(d)>lim) continue;                 // skip elements well off-screen
-      const speed=parseFloat(parEls[i].dataset.par)||0;
-      parEls[i].style.transform='translate3d(0,'+(d*speed).toFixed(2)+'px,0)';
+      parEls[i].style.transform='translate3d(0,'+(d*parSpeed[i]).toFixed(2)+'px,0)';
     }
   }
 
@@ -1058,15 +1067,20 @@
     const track=document.getElementById('mtrack');
     if(track && !reduce){
       const half=track.scrollWidth/2;       // width of one copy
-      let offset=0,lastY=scrollY,skew=0;
+      let offset=0,lastY=scrollY,skew=0,visible=true;
       const base=0.5;
+      // perf: no per-frame work while the strip is off-screen (it looks identical)
+      new IntersectionObserver(en=>{visible=en[0].isIntersecting},{rootMargin:'80px'})
+        .observe(document.getElementById('marquee'));
       (function tick(){
         const dv=scrollY-lastY; lastY=scrollY;
-        offset-=base+Math.min(Math.abs(dv)*0.6,42);   // scroll speed boosts the marquee
-        if(offset<=-half) offset+=half;
-        const target=Math.max(-9,Math.min(9,dv*0.28)); // lean into scroll direction
-        skew+=(target-skew)*0.12;
-        track.style.transform='translateX('+offset+'px) skewX('+skew+'deg)';
+        if(visible){
+          offset-=base+Math.min(Math.abs(dv)*0.6,42);   // scroll speed boosts the marquee
+          if(offset<=-half) offset+=half;
+          const target=Math.max(-9,Math.min(9,dv*0.28)); // lean into scroll direction
+          skew+=(target-skew)*0.12;
+          track.style.transform='translateX('+offset+'px) skewX('+skew+'deg)';
+        }
         requestAnimationFrame(tick);
       })();
     }
@@ -1117,8 +1131,11 @@
     addEventListener('mouseup',()=>ring.classList.remove('down'));
     addEventListener('mouseleave',()=>ring.classList.remove('active'));
     (function loop(){
-      rx+=(mx-rx)*0.2; ry+=(my-ry)*0.2;
-      ring.style.transform='translate('+rx+'px,'+ry+'px) translate(-50%,-50%)';
+      const dx=mx-rx,dy=my-ry;
+      if(Math.abs(dx)+Math.abs(dy)>0.05){          // perf: idle mouse = no style writes
+        rx+=dx*0.2; ry+=dy*0.2;
+        ring.style.transform='translate('+rx+'px,'+ry+'px) translate(-50%,-50%)';
+      }
       requestAnimationFrame(loop);
     })();
     const sel='a,button,.proj,.skill-card,.chip,.clink,.pdot,.award,.photo-stage';
