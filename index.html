@@ -245,11 +245,12 @@
     background-color:var(--surface);background-size:cover;background-position:center}
   .v-ph::after{content:"";position:absolute;inset:0;pointer-events:none;
     background:linear-gradient(to bottom,var(--bg) 0,transparent 16%,transparent 84%,var(--bg) 100%)}
-  html.js .v-ph{transition:clip-path 1.3s var(--ease)}
-  html.js .v-photos .v-ph:nth-child(2){transition-delay:.14s}
-  html.js .v-photos .v-ph:nth-child(3){transition-delay:.28s}
-  html.js .v-stage:not(.in) .v-ph{clip-path:inset(46% 0 46% 0)}
-  html.js .v-stage.in .v-ph{clip-path:inset(0 0 0 0)}
+  /* reveal runs on opacity+transform only - GPU-composited, no repaints */
+  html.js .v-ph{transition:opacity .9s var(--ease),transform 1.25s var(--ease)}
+  html.js .v-photos .v-ph:nth-child(2){transition-delay:.12s}
+  html.js .v-photos .v-ph:nth-child(3){transition-delay:.24s}
+  html.js .v-stage:not(.in) .v-ph{opacity:0;transform:translateY(7%) scale(1.05)}
+  html.js .v-stage.in .v-ph{opacity:1;transform:none}
   .v-word{position:absolute;inset:0;z-index:2;pointer-events:none;will-change:transform;
     display:flex;align-items:center;justify-content:center;flex-direction:column;gap:12px;
     color:#FFF8EC;text-shadow:0 2px 30px rgba(0,0,0,.6),0 1px 8px rgba(0,0,0,.5)}
@@ -335,7 +336,7 @@
     .wd{transition:opacity .4s linear!important}
     .hero-name .lt,.v-word .lt{opacity:1!important;transform:none!important;transition:none!important}
     .hero-sub,.status,.hero-cta,.deck,.scroll-hint{transition:opacity .5s ease!important;transform:none!important}
-    .v-ph{clip-path:none!important;transition:none!important}
+    .v-ph{opacity:1!important;transform:none!important;transition:opacity .5s ease!important}
     .v-word .idx{opacity:1!important;transform:none!important}
     .mq-track,.status i,.scroll-hint::after{animation:none!important}
     .dcard{transition:none!important}
@@ -960,6 +961,17 @@
   addEventListener('resize',measure,{passive:true});
   addEventListener('load',measure);
   if(document.fonts&&document.fonts.ready)document.fonts.ready.then(measure);
+
+  /* ---------- pre-decode value photos so their reveal never stutters ---------- */
+  addEventListener('load',()=>{
+    const idle=window.requestIdleCallback||(f=>setTimeout(f,300));
+    idle(()=>{
+      $$('.v-ph').forEach(el=>{
+        const m=/url\(["']?([^"')]+)/.exec(getComputedStyle(el).backgroundImage);
+        if(m){const im=new Image();im.src=m[1];if(im.decode)im.decode().catch(()=>{});}
+      });
+    });
+  });
 })();
 </script>
 </body>
