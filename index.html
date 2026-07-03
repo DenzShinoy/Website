@@ -1078,11 +1078,8 @@
     if(!strips.length)return;
     const visible=new Set();
     const vio=new IntersectionObserver(es=>{
-      es.forEach(e=>{
-        if(e.isIntersecting){visible.add(e.target);e.target._seen=performance.now();}
-        else visible.delete(e.target);
-      });
-    },{threshold:.3});                           // starts gliding as soon as the strip is meaningfully on screen
+      es.forEach(e=>{e.isIntersecting?visible.add(e.target):visible.delete(e.target);});
+    },{threshold:0,rootMargin:'12% 0px'});       // any sliver on (or near) screen keeps the glide running
     strips.forEach(s=>{
       vio.observe(s);
       s._hold=0;
@@ -1094,7 +1091,7 @@
       if(innerWidth>=700)return;                 // the strip only exists on phones
       const now=performance.now();
       visible.forEach(s=>{
-        if(now<s._hold||now-s._seen<1400||s.scrollWidth<=s.clientWidth)return;
+        if(now<s._hold||s.scrollWidth<=s.clientWidth)return;
         const cards=[...s.children];
         let cur=0,best=1e9;
         cards.forEach((c,i)=>{const d=Math.abs(centerOf(s,c)-s.scrollLeft);if(d<best){best=d;cur=i;}});
