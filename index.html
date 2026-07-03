@@ -285,13 +285,16 @@
   .v-text{max-width:860px;margin:22vh auto 22vh;padding:0 32px;text-align:center;will-change:transform;
     font-size:clamp(19px,2.8vw,30px);font-weight:500;line-height:1.45;letter-spacing:-.015em}
   .v-text em{font-size:1.1em}
-  /* phone: swipeable card strip - one photo tall, next card peeks in from the right */
+  /* phone: one rounded card per value - photos crossfade like the landing-page deck
+     (pure CSS class-swap transitions: cannot be dropped the way programmatic scrolls can) */
   @media(max-width:680px){
     .v-item{margin:9vh 0}
-    .v-photos{flex-direction:row;overflow-x:auto;gap:10px;padding:0 18px;
-      scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;scrollbar-width:none}
-    .v-photos::-webkit-scrollbar{display:none}
-    .v-ph{flex:0 0 84%;height:54vh;scroll-snap-align:center;border-radius:16px;overflow:hidden}
+    .v-photos{display:block;position:relative;height:54vh;margin:0 18px;
+      border-radius:16px;overflow:hidden;box-shadow:0 24px 55px -28px rgba(36,26,18,.45)}
+    html.js .v-stage .v-ph,html.js .v-stage.in .v-ph,html.js .v-stage:not(.in) .v-ph{
+      position:absolute;inset:0;height:100%;opacity:0;transform:scale(1.07);
+      transition:opacity .95s var(--ease),transform 7s linear}
+    html.js .v-stage .v-ph.vp-on{opacity:1;transform:scale(1)}
     .v-ph::after{display:none}
     .v-text{margin:9vh auto 9vh}
   }
@@ -399,7 +402,7 @@
     .v-photos,.v-word,.v-text,.v-head{will-change:auto}
   }
   @supports(height:100svh){
-    @media(max-width:680px){.v-ph{height:54svh}}  /* photo height ignores URL-bar resizes */
+    @media(max-width:680px){.v-photos{height:54svh}}  /* card height ignores URL-bar resizes */
   }
 
   @media(prefers-reduced-motion:reduce){
@@ -1071,34 +1074,32 @@
     });
   });
 
-  /* ---------- phone: value strips glide through their photos on their own ---------- */
+  /* ---------- phone: value photos crossfade like the landing-page deck ---------- */
   (function(){
-    if(reduce)return;
-    const strips=$$('.v-photos');
-    if(!strips.length)return;
+    const stages=$$('.v-stage');
+    if(!stages.length)return;
     const visible=new Set();
     const vio=new IntersectionObserver(es=>{
       es.forEach(e=>{e.isIntersecting?visible.add(e.target):visible.delete(e.target);});
-    },{threshold:0,rootMargin:'12% 0px'});       // any sliver on (or near) screen keeps the glide running
-    strips.forEach(s=>{
-      vio.observe(s);
-      s._hold=0;
-      // any touch pauses the glide so it never fights the user's swipe
-      s.addEventListener('pointerdown',()=>{s._hold=performance.now()+6000;},{passive:true});
+    },{threshold:0,rootMargin:'10% 0px'});
+    function advance(st){
+      const phs=st._phs;
+      phs[st._i].classList.remove('vp-on');
+      st._i=(st._i+1)%phs.length;
+      phs[st._i].classList.add('vp-on');
+    }
+    stages.forEach(st=>{
+      st._phs=[...st.querySelectorAll('.v-ph')];
+      st._i=0;
+      if(st._phs[0])st._phs[0].classList.add('vp-on');
+      vio.observe(st);
+      st.addEventListener('click',()=>{if(innerWidth<700&&!reduce)advance(st);});  // tap skips ahead
     });
-    const centerOf=(s,c)=>c.offsetLeft-(s.clientWidth-c.clientWidth)/2;
+    if(reduce)return;
     setInterval(()=>{
-      if(innerWidth>=700)return;                 // the strip only exists on phones
-      const now=performance.now();
-      visible.forEach(s=>{
-        if(now<s._hold||s.scrollWidth<=s.clientWidth)return;
-        const cards=[...s.children];
-        let cur=0,best=1e9;
-        cards.forEach((c,i)=>{const d=Math.abs(centerOf(s,c)-s.scrollLeft);if(d<best){best=d;cur=i;}});
-        const next=cards[(cur+1)%cards.length];
-        s.scrollTo({left:centerOf(s,next),behavior:'smooth'});
-      });
-    },2500);                                     // full set of three seen in ~5s on screen
+      if(innerWidth>=700)return;                 // desktop shows the triptych instead
+      visible.forEach(st=>advance(st));
+    },3000);
   })();
 })();
 </script>
