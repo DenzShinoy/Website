@@ -269,8 +269,16 @@
   .v-text{max-width:860px;margin:22vh auto 22vh;padding:0 32px;text-align:center;will-change:transform;
     font-size:clamp(19px,2.8vw,30px);font-weight:500;line-height:1.45;letter-spacing:-.015em}
   .v-text em{font-size:1.1em}
-  @media(max-width:680px){.v-item{margin:9vh 0}.v-photos{flex-direction:column;gap:10px}
-    .v-ph{flex:0 0 auto;width:100%;height:44vh}.v-text{margin:12vh auto 12vh}}
+  /* phone: swipeable card strip - one photo tall, next card peeks in from the right */
+  @media(max-width:680px){
+    .v-item{margin:9vh 0}
+    .v-photos{flex-direction:row;overflow-x:auto;gap:10px;padding:0 18px;
+      scroll-snap-type:x mandatory;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+    .v-photos::-webkit-scrollbar{display:none}
+    .v-ph{flex:0 0 84%;height:54vh;scroll-snap-align:center;border-radius:16px;overflow:hidden}
+    .v-ph::after{display:none}
+    .v-text{margin:9vh auto 9vh}
+  }
 
   /* ================= background: pinned horizontal ================= */
   .hz{position:relative}
@@ -350,9 +358,14 @@
     .wrap{padding:0 22px}
     .sec-title{margin-bottom:34px}
     header{padding:88px 0 44px}
-    .hero-grid{gap:40px}
+    .hero-grid{gap:44px}
+    .eyebrow{font-size:10.5px;letter-spacing:1.8px;gap:8px;margin-bottom:20px}
+    .eyebrow::before{width:20px}
+    .hero-name{font-size:min(17.5vw,15vh)}       /* fills the phone width properly */
     .hero-sub{max-width:none}
-    .deck{max-width:min(300px,42vh)}
+    .deck{max-width:min(270px,40vh)}
+    .dcard.pos1{transform:translate(8%,3%) rotate(6deg) scale(.92)}   /* tighter fan: no edge clipping */
+    .dcard.pos2{transform:translate(-8%,3%) rotate(-6deg) scale(.92)}
     .xcard{padding:26px 22px}
     .xcard li{font-size:14.5px}
     .xyear,.pyear{white-space:normal}
@@ -368,7 +381,7 @@
     .v-photos,.v-word,.v-text,.v-head{will-change:auto}
   }
   @supports(height:100svh){
-    @media(max-width:680px){.v-ph{height:44svh}}  /* photo height ignores URL-bar resizes */
+    @media(max-width:680px){.v-ph{height:54svh}}  /* photo height ignores URL-bar resizes */
   }
 
   @media(prefers-reduced-motion:reduce){
