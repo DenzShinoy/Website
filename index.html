@@ -65,8 +65,9 @@
     background:linear-gradient(to bottom,rgba(244,236,224,.92),rgba(244,236,224,0));
     transition:transform .55s var(--ease);will-change:transform}
   nav.hide{transform:translateY(-110%)}
-  .logo{font-family:'Space Mono',monospace;font-size:13.5px;font-weight:700;letter-spacing:.5px}
+  .logo{font-family:'Space Mono',monospace;font-size:13.5px;font-weight:700;letter-spacing:.5px;white-space:nowrap}
   .logo span{color:var(--amber)}
+  .logo .tagline{font-style:normal}
   .nav-links{display:flex;gap:26px;font-size:14px;font-weight:500;color:var(--muted)}
   .nav-links a{position:relative;transition:color .3s}
   .nav-links a:hover{color:var(--text)}
@@ -190,6 +191,7 @@
 
   /* ================= experience: sticky stack ================= */
   .stack{display:grid;gap:26px}
+  .stack .xcard{min-width:0}                       /* long nowrap children must not widen the column */
   .xcard{position:sticky;background:var(--surface);border:1px solid var(--line);
     border-radius:var(--r);padding:44px;will-change:transform;
     transition:border-color .4s}
@@ -333,6 +335,42 @@
   /* ================= no-JS + reduced motion ================= */
   html:not(.js) [data-io],html:not(.js) .wd,html:not(.js) .hero-sub,html:not(.js) .status,
   html:not(.js) .hero-cta,html:not(.js) .deck,html:not(.js) .scroll-hint{opacity:1!important;transform:none!important}
+
+  /* ================= mobile: aesthetics + performance ================= */
+  @supports(height:100svh){
+    header{min-height:100svh}                     /* stable against the collapsing URL bar */
+  }
+  @media(max-width:720px){
+    .logo .tagline,.logo span{display:none}       /* just the name in the bar */
+    nav{padding:16px 22px}
+    .grain{display:none}                          /* skip the extra composited layer on phones */
+  }
+  @media(max-width:680px){
+    section{padding:84px 0}
+    .wrap{padding:0 22px}
+    .sec-title{margin-bottom:34px}
+    header{padding:88px 0 44px}
+    .hero-grid{gap:40px}
+    .hero-sub{max-width:none}
+    .deck{max-width:min(300px,42vh)}
+    .xcard{padding:26px 22px}
+    .xcard li{font-size:14.5px}
+    .xyear,.pyear{white-space:normal}
+    .prow{padding:34px 0}
+    .prow-head{gap:14px}
+    .pyear{margin-left:0;width:100%;order:3}
+    .hpanel{padding:30px 24px}
+    #contact{padding:110px 0 90px}
+    .contact-links{gap:10px}
+    .clink{padding:13px 22px;font-size:14px}
+    footer{padding:26px 22px}
+    /* perf: parallax is off on mobile, so release its compositor layers */
+    .v-photos,.v-word,.v-text,.v-head{will-change:auto}
+  }
+  @supports(height:100svh){
+    @media(max-width:680px){.v-ph{height:44svh}}  /* photo height ignores URL-bar resizes */
+  }
+
   @media(prefers-reduced-motion:reduce){
     [data-io]{transform:none!important;transition:opacity .6s ease var(--d,0s)!important}
     .wd{transition:opacity .4s linear!important}
@@ -365,7 +403,7 @@
 <div class="progress" id="progress"></div>
 
 <nav id="nav">
-  <div class="logo">Denz Shinoy <span>//</span> Engineering to change the world</div>
+  <div class="logo">Denz Shinoy <span>//</span> <i class="tagline">Engineering to change the world</i></div>
   <div class="nav-links">
     <a href="#about">About</a>
     <a href="#experience">Experience</a>
@@ -858,18 +896,22 @@
 
   /* ---------- master rAF loop ---------- */
   const navEl=$('#nav'),prog=$('#progress'),mq=$('#mq'),deck=$('#deck');
-  let lastY=scrollY;
+  let lastY=scrollY,force=2;               // force>0 paints the first frames after load/resize
   (function raf(){
-    const y=scrollY,dy=y-lastY;lastY=y;
+    const y=scrollY;
+    // idle guard: when nothing scrolled, do zero work this frame
+    if(y===lastY&&force<=0){requestAnimationFrame(raf);return;}
+    const dy=y-lastY;lastY=y;if(force>0)force--;
+    const mobile=innerWidth<700;
     // progress bar
     prog.style.transform='scaleX('+(maxScroll>0?y/maxScroll:0)+')';
     // auto-hiding nav
     if(y<90||dy<-1.5)navEl.classList.remove('hide');
     else if(dy>1.5&&y>240)navEl.classList.add('hide');
-    // hero deck drifts slightly slower than the page
-    if(heroVis&&!reduce&&y<innerHeight)deck.style.transform='translateY('+(y*0.12).toFixed(1)+'px)';
-    // parallax (values section)
-    if(!reduce&&parBase.length){
+    // hero deck drifts slightly slower than the page (desktop only)
+    if(heroVis&&!reduce&&!mobile&&y<innerHeight)deck.style.transform='translateY('+(y*0.12).toFixed(1)+'px)';
+    // parallax (values section) - skipped on mobile: photos stack vertically there
+    if(!reduce&&!mobile&&parBase.length){
       const mid=y+innerHeight/2,lim=innerHeight*1.35;
       for(let i=0;i<parEls.length;i++){
         const d=parBase[i]-mid;
@@ -877,8 +919,8 @@
         parEls[i].style.transform='translate3d(0,'+(d*parSpd[i]).toFixed(1)+'px,0)';
       }
     }
-    // sticky stack veil + scale
-    if(stackVis&&!reduce){
+    // sticky stack veil + scale (desktop only - subtle effect, not worth the layout reads on phones)
+    if(stackVis&&!reduce&&!mobile){
       for(let i=0;i<xcards.length-1;i++){
         const nTop=xcards[i+1].getBoundingClientRect().top;
         const own=stackTop+i*22;
@@ -960,7 +1002,20 @@
 
   /* ---------- measurement lifecycle ---------- */
   measure();
-  addEventListener('resize',measure,{passive:true});
+  // debounced; height-only changes (mobile URL bar collapsing) skip the full re-measure
+  let rzTimer,lastW=innerWidth;
+  addEventListener('resize',()=>{
+    clearTimeout(rzTimer);
+    rzTimer=setTimeout(()=>{
+      maxScroll=document.documentElement.scrollHeight-innerHeight;
+      if(innerWidth!==lastW){
+        lastW=innerWidth;
+        if(innerWidth<700)parEls.forEach(el=>el.style.transform='');   // clear stale parallax offsets
+        measure();
+      }
+      force=2;
+    },150);
+  },{passive:true});
   addEventListener('load',measure);
   if(document.fonts&&document.fonts.ready)document.fonts.ready.then(measure);
 
