@@ -390,6 +390,8 @@
     .pyear{margin-left:0;width:100%;order:3}
     .hpanel{padding:30px 24px}
     #contact{padding:110px 0 90px}
+    #contact h2{font-size:14vw;letter-spacing:-.035em}   /* the statement owns the screen */
+    #contact .sub{font-size:12.5px;margin-top:14px;color:var(--muted)}
     .contact-links{gap:10px}
     .clink{padding:13px 22px;font-size:14px}
     footer{padding:26px 22px}
@@ -765,7 +767,7 @@
 <section id="contact" style="padding-top:40px">
   <div class="contact" data-anim="scale">
     <h2 data-io>Let's build<br>something <em>real.</em></h2>
-    <p>Open to Mechatronics and Project Management internships.</p>
+    <p class="sub">Open to Mechatronics and Project Management internships.</p>
     <div class="contact-links">
       <a class="clink" href="mailto:denzshinoy@gmail.com">denzshinoy@gmail.com</a>
       <a class="clink" href="tel:+64275768776">+64 27 576 8776</a>
@@ -1076,27 +1078,30 @@
     if(!strips.length)return;
     const visible=new Set();
     const vio=new IntersectionObserver(es=>{
-      es.forEach(e=>{e.isIntersecting?visible.add(e.target):visible.delete(e.target);});
-    },{threshold:.55});
+      es.forEach(e=>{
+        if(e.isIntersecting){visible.add(e.target);e.target._seen=performance.now();}
+        else visible.delete(e.target);
+      });
+    },{threshold:.3});                           // starts gliding as soon as the strip is meaningfully on screen
     strips.forEach(s=>{
       vio.observe(s);
       s._hold=0;
       // any touch pauses the glide so it never fights the user's swipe
-      s.addEventListener('pointerdown',()=>{s._hold=performance.now()+7000;},{passive:true});
+      s.addEventListener('pointerdown',()=>{s._hold=performance.now()+6000;},{passive:true});
     });
     const centerOf=(s,c)=>c.offsetLeft-(s.clientWidth-c.clientWidth)/2;
     setInterval(()=>{
       if(innerWidth>=700)return;                 // the strip only exists on phones
       const now=performance.now();
       visible.forEach(s=>{
-        if(now<s._hold||s.scrollWidth<=s.clientWidth)return;
+        if(now<s._hold||now-s._seen<1400||s.scrollWidth<=s.clientWidth)return;
         const cards=[...s.children];
         let cur=0,best=1e9;
         cards.forEach((c,i)=>{const d=Math.abs(centerOf(s,c)-s.scrollLeft);if(d<best){best=d;cur=i;}});
         const next=cards[(cur+1)%cards.length];
         s.scrollTo({left:centerOf(s,next),behavior:'smooth'});
       });
-    },3400);
+    },2500);                                     // full set of three seen in ~5s on screen
   })();
 })();
 </script>
